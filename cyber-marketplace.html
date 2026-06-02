@@ -1251,6 +1251,18 @@
       text-shadow: 0 0 5px #39ff14;
       color: #fff;
     }
+
+    /* ===== RETRO DITHERED WAVES BACKGROUND ===== */
+    #ditherCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.35;
+      pointer-events: none;
+    }
   </style>
 </head>
 
@@ -1285,6 +1297,8 @@
 
   <main>
     <section id="home" class="hero">
+      <!-- Retro Dither Waves WebGL Canvas -->
+      <canvas id="ditherCanvas"></canvas>
       <div class="hero-content fade-in">
         <h1 class="hero-title">
           ELEVATE YOUR <span class="text-neon-amber">SYSTEM</span>
@@ -1849,6 +1863,225 @@
         window.open(waUrl, '_blank');
       });
     }
+
+    // ===== RETRO DITHERED WAVES WEBGL BACKGROUND =====
+    (function() {
+      const canvas = document.getElementById('ditherCanvas');
+      if (!canvas) return;
+
+      const gl = canvas.getContext('webgl');
+      if (!gl) {
+        console.warn('WebGL not supported on this browser.');
+        return;
+      }
+
+      // Vertex shader source
+      const vsSource = `
+        attribute vec2 position;
+        varying vec2 vUv;
+        void main() {
+          vUv = position * 0.5 + 0.5;
+          gl_Position = vec4(position, 0.0, 1.0);
+        }
+      `;
+
+      // Fragment shader source
+      const fsSource = `
+        precision highp float;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        uniform vec2 u_mouse;
+        uniform vec3 u_waveColor;
+        uniform float u_pixelSize;
+
+        float noise(in vec2 p) {
+            return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+        }
+
+        float smooth_noise(in vec2 p) {
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+            vec2 u = f*f*(3.0-2.0*f);
+            return mix(mix(noise(i + vec2(0.0,0.0)), noise(i + vec2(1.0,0.0)), u.x),
+                       mix(noise(i + vec2(0.0,1.0)), noise(i + vec2(1.0,1.0)), u.x), u.y);
+        }
+
+        float fbm(in vec2 p) {
+            float value = 0.0;
+            float amplitude = 0.5;
+            float frequency = 1.8;
+            for (int i = 0; i < 4; i++) {
+                value += amplitude * smooth_noise(p * frequency);
+                frequency *= 2.2;
+                amplitude *= 0.5;
+            }
+            return value;
+        }
+
+        float pattern(in vec2 p) {
+            vec2 p2 = p - u_time * 0.02;
+            return fbm(p + fbm(p2));
+        }
+
+        float getBayerValue(int x, int y) {
+            if (y == 0) {
+                if (x == 0) return 0.0/64.0;  if (x == 1) return 48.0/64.0; if (x == 2) return 12.0/64.0; if (x == 3) return 60.0/64.0;
+                if (x == 4) return 3.0/64.0;  if (x == 5) return 51.0/64.0; if (x == 6) return 15.0/64.0; if (x == 7) return 63.0/64.0;
+            }
+            if (y == 1) {
+                if (x == 0) return 32.0/64.0; if (x == 1) return 16.0/64.0; if (x == 2) return 44.0/64.0; if (x == 3) return 28.0/64.0;
+                if (x == 4) return 35.0/64.0; if (x == 5) return 19.0/64.0; if (x == 6) return 47.0/64.0; if (x == 7) return 31.0/64.0;
+            }
+            if (y == 2) {
+                if (x == 0) return 8.0/64.0;  if (x == 1) return 56.0/64.0; if (x == 2) return 4.0/64.0;  if (x == 3) return 52.0/64.0;
+                if (x == 4) return 11.0/64.0; if (x == 5) return 59.0/64.0; if (x == 6) return 7.0/64.0;  if (x == 7) return 55.0/64.0;
+            }
+            if (y == 3) {
+                if (x == 0) return 40.0/64.0; if (x == 1) return 24.0/64.0; if (x == 2) return 36.0/64.0; if (x == 3) return 20.0/64.0;
+                if (x == 4) return 43.0/64.0; if (x == 5) return 27.0/64.0; if (x == 6) return 39.0/64.0; if (x == 7) return 23.0/64.0;
+            }
+            if (y == 4) {
+                if (x == 0) return 2.0/64.0;  if (x == 1) return 50.0/64.0; if (x == 2) return 14.0/64.0; if (x == 3) return 62.0/64.0;
+                if (x == 4) return 1.0/64.0;  if (x == 5) return 49.0/64.0; if (x == 6) return 13.0/64.0; if (x == 7) return 61.0/64.0;
+            }
+            if (y == 5) {
+                if (x == 0) return 34.0/64.0; if (x == 1) return 18.0/64.0; if (x == 2) return 46.0/64.0; if (x == 3) return 30.0/64.0;
+                if (x == 4) return 33.0/64.0; if (x == 5) return 17.0/64.0; if (x == 6) return 45.0/64.0; if (x == 7) return 29.0/64.0;
+            }
+            if (y == 6) {
+                if (x == 0) return 10.0/64.0; if (x == 1) return 58.0/64.0; if (x == 2) return 6.0/64.0;  if (x == 3) return 54.0/64.0;
+                if (x == 4) return 9.0/64.0;  if (x == 5) return 57.0/64.0; if (x == 6) return 5.0/64.0;  if (x == 7) return 53.0/64.0;
+            }
+            if (y == 7) {
+                if (x == 0) return 42.0/64.0; if (x == 1) return 26.0/64.0; if (x == 2) return 38.0/64.0; if (x == 3) return 22.0/64.0;
+                if (x == 4) return 41.0/64.0; if (x == 5) return 25.0/64.0; if (x == 6) return 37.0/64.0; if (x == 7) return 21.0/64.0;
+            }
+            return 0.0;
+        }
+
+        void main() {
+            vec2 normalizedPixelSize = u_pixelSize / u_resolution;
+            vec2 uvPixel = normalizedPixelSize * floor(gl_FragCoord.xy / u_pixelSize);
+            
+            vec2 p = uvPixel - 0.5;
+            p.x *= u_resolution.x / u_resolution.y;
+            
+            float f = pattern(p * 2.5);
+            
+            vec2 mouseNDC = u_mouse / u_resolution;
+            mouseNDC.y = 1.0 - mouseNDC.y;
+            mouseNDC -= 0.5;
+            mouseNDC.x *= u_resolution.x / u_resolution.y;
+            
+            float dist = length(p - mouseNDC);
+            float mouseEffect = 1.0 - smoothstep(0.0, 0.45, dist);
+            f += 0.15 * mouseEffect;
+            
+            vec3 col = mix(vec3(0.015, 0.01, 0.01), u_waveColor, clamp(f, 0.0, 1.0));
+            
+            vec2 scaledCoord = floor(gl_FragCoord.xy / u_pixelSize);
+            int xMod = int(mod(scaledCoord.x, 8.0));
+            int yMod = int(mod(scaledCoord.y, 8.0));
+            float threshold = getBayerValue(xMod, yMod) - 0.25;
+            
+            float colorNum = 5.0;
+            float stepVal = 1.0 / (colorNum - 1.0);
+            col += threshold * stepVal;
+            
+            col = clamp(col - 0.12, 0.0, 1.0);
+            col = floor(col * (colorNum - 1.0) + 0.5) / (colorNum - 1.0);
+            
+            gl_FragColor = vec4(col, 1.0);
+        }
+      `;
+
+      function createShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+          gl.deleteShader(shader);
+          return null;
+        }
+        return shader;
+      }
+
+      const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+      const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+      if (!vs || !fs) return;
+
+      const program = gl.createProgram();
+      gl.attachShader(program, vs);
+      gl.attachShader(program, fs);
+      gl.linkProgram(program);
+
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error('Program link error:', gl.getProgramInfoLog(program));
+        return;
+      }
+
+      gl.useProgram(program);
+
+      const positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      const positions = new Float32Array([
+        -1.0, -1.0,  1.0, -1.0, -1.0,  1.0,
+        -1.0,  1.0,  1.0, -1.0,  1.0,  1.0,
+      ]);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+      const positionLocation = gl.getAttribLocation(program, 'position');
+      gl.enableVertexAttribArray(positionLocation);
+      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+      const resolutionLoc = gl.getUniformLocation(program, 'u_resolution');
+      const timeLoc       = gl.getUniformLocation(program, 'u_time');
+      const mouseLoc      = gl.getUniformLocation(program, 'u_mouse');
+      const waveColorLoc  = gl.getUniformLocation(program, 'u_waveColor');
+      const pixelSizeLoc  = gl.getUniformLocation(program, 'u_pixelSize');
+
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+
+      const hero = document.getElementById('home');
+      if (hero) {
+        hero.addEventListener('mousemove', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          mouseX = e.clientX - rect.left;
+          mouseY = e.clientY - rect.top;
+        });
+      }
+
+      function resize() {
+        const width = canvas.parentElement.clientWidth;
+        const height = canvas.parentElement.clientHeight;
+        if (canvas.width !== width || canvas.height !== height) {
+          canvas.width = width;
+          canvas.height = height;
+          gl.viewport(0, 0, width, height);
+        }
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      function render(time) {
+        gl.useProgram(program);
+
+        gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
+        gl.uniform1f(timeLoc, time * 0.001);
+        gl.uniform2f(mouseLoc, mouseX, mouseY);
+        
+        gl.uniform3f(waveColorLoc, 0.45, 0.08, 0.08); 
+        gl.uniform1f(pixelSizeLoc, 2.5);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        requestAnimationFrame(render);
+      }
+
+      requestAnimationFrame(render);
+    })();
   </script>
 
   <!-- Neural Link Connect Modal -->
