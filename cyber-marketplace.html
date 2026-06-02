@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS - Cyber Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #050505;
+      --bg-color-alt: #0a0a0a;
+      --text-main: #f0f0f0;
+      --text-muted: #888888;
+      --neon-red: #ff2a2a;
+      --neon-red-dim: rgba(255, 42, 42, 0.3);
+      --neon-amber: #ff9d00;
+      --neon-amber-dim: rgba(255, 157, 0, 0.3);
+      --border-color: #222;
+      --font-heading: 'Orbitron', sans-serif;
+      --font-body: 'Rajdhani', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Grid Overlay Background */
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image:
+        linear-gradient(rgba(255, 42, 42, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 42, 42, 0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Custom Cursor Glow */
+    .cursor-glow {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255, 42, 42, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: -1;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+    }
+
+    /* Typography & Utils */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: var(--font-heading);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .text-neon-amber {
+      color: var(--neon-amber);
+      text-shadow: 0 0 10px var(--neon-amber-dim);
+    }
+
+    .text-neon-red {
+      color: var(--neon-red);
+      text-shadow: 0 0 10px var(--neon-red-dim);
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 5%;
+      background: rgba(5, 5, 5, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      background: var(--neon-red);
+      color: #000;
+      border-radius: 2px;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-heading);
+      font-size: 0.9rem;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--neon-red);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: var(--neon-red);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    /* Buttons */
+    .cyber-button,
+    .cyber-button-sm {
+      background: transparent;
+      color: var(--text-main);
+      border: 1px solid var(--neon-red);
+      font-family: var(--font-heading);
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .cyber-button-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .cyber-button {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    }
+
+    .cyber-button:hover,
+    .cyber-button-sm:hover {
+      background: var(--neon-red-dim);
+      box-shadow: 0 0 15px var(--neon-red-dim);
+      text-shadow: 0 0 5px var(--neon-red);
+    }
+
+    .cyber-button.accent {
+      border-color: var(--neon-amber);
+    }
+
+    .cyber-button.accent:hover {
+      background: var(--neon-amber-dim);
+      box-shadow: 0 0 15px var(--neon-amber-dim);
+      text-shadow: 0 0 5px var(--neon-amber);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10%;
+      position: relative;
+    }
+
+    .hero-content {
+      flex: 1;
+      max-width: 600px;
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-size: 4rem;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      font-weight: 500;
+    }
+
+    /* ===== HERO VISUAL HOLOGRAM STAGE ===== */
+    .hero-visual {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      perspective: 900px;
+      min-height: 420px;
+      cursor: crosshair;
+    }
+
+    /* Stage label */
+    .holo-label {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      color: var(--neon-amber);
+      opacity: 0.7;
+      white-space: nowrap;
+    }
+
+    /* Hologram stage: holds all 3 objects */
+    .hologram-stage {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      transform-style: preserve-3d;
+    }
+
+    /* Each holo-object sits on top of each other, only active is visible */
+    .holo-object {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform-style: preserve-3d;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.05s;
+    }
+    .holo-object.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Glitch flash overlay on the stage */
+    .glitch-flash {
+      position: absolute;
+      inset: -20px;
+      z-index: 10;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .glitch-flash.firing {
+      animation: stage-glitch 0.7s steps(1) forwards;
+    }
+    @keyframes stage-glitch {
+      0%   { opacity: 1; background: var(--neon-red); clip-path: inset(60% 0 0 0); }
+      10%  { clip-path: inset(10% 0 70% 0); background: #00ffff; }
+      20%  { clip-path: inset(80% 0 5% 0);  background: var(--neon-red); transform: translateX(8px); }
+      30%  { clip-path: inset(30% 0 50% 0); background: #00ffff; transform: translateX(-8px); }
+      40%  { clip-path: inset(50% 0 20% 0); background: var(--neon-amber); transform: translateX(4px); }
+      50%  { clip-path: inset(5% 0 80% 0);  background: var(--neon-red); transform: translateX(0); }
+      60%  { clip-path: inset(70% 0 10% 0); background: #00ffff; }
+      70%  { clip-path: inset(20% 0 60% 0); background: var(--neon-red); transform: translateX(-4px); }
+      80%  { clip-path: inset(90% 0 2% 0);  background: var(--neon-amber); }
+      90%  { clip-path: inset(40% 0 40% 0); background: #00ffff; transform: translateX(6px); }
+      100% { opacity: 0; }
+    }
+
+    /* ===== HOLOGRAM 1: TESSERACT ===== */
+    .cyber-tesseract {
+      width: 300px;
+      height: 300px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-20deg) rotateY(45deg);
+      transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .cube {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform-style: preserve-3d;
+      transform: translate(-50%, -50%);
+    }
+
+    .face {
+      position: absolute;
+      border: 2px solid var(--neon-red);
+      background: rgba(255, 42, 42, 0.05);
+      box-shadow: inset 0 0 20px var(--neon-red-dim), 0 0 20px var(--neon-red-dim);
+      backdrop-filter: blur(2px);
+      transition: border-color 0.5s, box-shadow 0.5s, background 0.5s;
+    }
+
+    .cube-outer .face { width: 200px; height: 200px; top: -100px; left: -100px; }
+    .cube-outer .front  { transform: translateZ(100px); }
+    .cube-outer .back   { transform: rotateY(180deg) translateZ(100px); }
+    .cube-outer .right  { transform: rotateY(90deg) translateZ(100px); }
+    .cube-outer .left   { transform: rotateY(-90deg) translateZ(100px); }
+    .cube-outer .top    { transform: rotateX(90deg) translateZ(100px); }
+    .cube-outer .bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+    .cube-inner .face {
+      width: 100px; height: 100px; top: -50px; left: -50px;
+      border-color: var(--neon-amber);
+      background: rgba(255, 157, 0, 0.1);
+      box-shadow: inset 0 0 30px var(--neon-amber-dim), 0 0 30px var(--neon-amber-dim);
+    }
+    .cube-inner { animation: cube-inner-spin 8s infinite linear; }
+    .cube-inner .front  { transform: translateZ(50px); }
+    .cube-inner .back   { transform: rotateY(180deg) translateZ(50px); }
+    .cube-inner .right  { transform: rotateY(90deg) translateZ(50px); }
+    .cube-inner .left   { transform: rotateY(-90deg) translateZ(50px); }
+    .cube-inner .top    { transform: rotateX(90deg) translateZ(50px); }
+    .cube-inner .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+    @keyframes cube-inner-spin {
+      0%   { transform: translate(-50%,-50%) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      100% { transform: translate(-50%,-50%) rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+    }
+
+    .holo-object.active .cyber-tesseract:hover .cube-outer .face {
+      border-color: var(--neon-amber);
+      box-shadow: inset 0 0 40px var(--neon-amber-dim), 0 0 40px var(--neon-amber-dim);
+      background: rgba(255,157,0,0.12);
+    }
+    .holo-object.active .cyber-tesseract:hover .cube-inner .face {
+      border-color: #fff;
+      box-shadow: 0 0 50px var(--neon-amber), inset 0 0 50px var(--neon-amber);
+    }
+
+    /* ===== HOLOGRAM 2: PS CONTROLLER ===== */
+    .holo-controller {
+      width: 280px;
+      height: 220px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-15deg) rotateY(25deg);
+      transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      animation: ctrl-idle-float 6s ease-in-out infinite;
+    }
+    @keyframes ctrl-idle-float {
+      0%, 100% { animation-timing-function: ease-in-out; }
+      0%   { transform: rotateX(-15deg) rotateY(25deg) translateY(0px); }
+      50%  { transform: rotateX(-15deg) rotateY(25deg) translateY(-12px); }
+    }
+    /* Controller body faces */
+    .ctrl-face {
+      position: absolute;
+      border: 1.5px solid var(--neon-red);
+      background: rgba(255,42,42,0.06);
+      box-shadow: inset 0 0 12px var(--neon-red-dim), 0 0 8px var(--neon-red-dim);
+    }
+    /* Main body: 240x90x30 */
+    .ctrl-front  { width:240px; height:90px; top:60px; left:20px; transform: translateZ(15px); }
+    .ctrl-back   { width:240px; height:90px; top:60px; left:20px; transform: rotateY(180deg) translateZ(15px) translateX(-240px); border-color: rgba(255,42,42,0.3); }
+    .ctrl-top-body    { width:240px; height:30px; top:60px; left:20px; transform: rotateX(90deg) translateZ(30px) translateY(-30px) translateZ(-15px); border-color: var(--neon-amber); background: rgba(255,157,0,0.05); }
+    .ctrl-bottom-body { width:240px; height:30px; top:60px; left:20px; transform: rotateX(-90deg) translateZ(90px) translateZ(-15px); border-color: rgba(255,42,42,0.2); }
+    .ctrl-side-r { width:30px; height:90px; top:60px; left:230px; transform: rotateY(90deg) translateZ(15px); border-color: var(--neon-amber); background: rgba(255,157,0,0.05); }
+    .ctrl-side-l { width:30px; height:90px; top:60px; left:20px; transform: rotateY(-90deg) translateZ(15px); border-color: var(--neon-amber); background: rgba(255,157,0,0.05); }
+    /* Left grip */
+    .ctrl-grip-l { width:70px; height:100px; top:110px; left:20px; transform: translateZ(15px) rotateZ(-10deg); border-color:var(--neon-amber); background:rgba(255,157,0,0.05); }
+    .ctrl-grip-l-side { width:30px; height:100px; top:110px; left:20px; transform: rotateZ(-10deg) rotateY(-90deg) translateZ(15px); border-color:var(--neon-amber); background:rgba(255,157,0,0.04); }
+    /* Right grip */
+    .ctrl-grip-r { width:70px; height:100px; top:110px; left:190px; transform: translateZ(15px) rotateZ(10deg); border-color:var(--neon-amber); background:rgba(255,157,0,0.05); }
+    .ctrl-grip-r-side { width:30px; height:100px; top:110px; left:240px; transform: rotateZ(10deg) rotateY(90deg) translateZ(15px); border-color:var(--neon-amber); background:rgba(255,157,0,0.04); }
+    /* D-pad */
+    .ctrl-dpad-h { position:absolute; width:40px; height:14px; top:72px; left:50px; transform: translateZ(16px); border: 1.5px solid var(--neon-red); background:rgba(255,42,42,0.2); box-shadow: 0 0 8px var(--neon-red); }
+    .ctrl-dpad-v { position:absolute; width:14px; height:40px; top:58px; left:63px; transform: translateZ(16px); border: 1.5px solid var(--neon-red); background:rgba(255,42,42,0.2); box-shadow: 0 0 8px var(--neon-red); }
+    /* Buttons (X O △ □) */
+    .ctrl-btn { position:absolute; width:14px; height:14px; border-radius:50%; border:1.5px solid; transform: translateZ(16px); box-shadow: 0 0 10px; }
+    .ctrl-btn-x { top:98px; left:168px; border-color:#4fc3f7; box-shadow: 0 0 10px #4fc3f7; background:rgba(79,195,247,0.2); }
+    .ctrl-btn-o { top:84px; left:183px; border-color:var(--neon-red); box-shadow: 0 0 10px var(--neon-red); background:rgba(255,42,42,0.2); }
+    .ctrl-btn-t { top:70px; left:168px; border-color:#a5d6a7; box-shadow: 0 0 10px #a5d6a7; background:rgba(165,214,167,0.2); border-radius: 0; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+    .ctrl-btn-s { top:84px; left:153px; border-color:#ce93d8; box-shadow: 0 0 10px #ce93d8; background:rgba(206,147,216,0.2); border-radius: 0; }
+    /* Analog sticks */
+    .ctrl-stick { position:absolute; width:22px; height:22px; border-radius:50%; border:2px solid var(--neon-amber); box-shadow: 0 0 12px var(--neon-amber), inset 0 0 8px var(--neon-amber-dim); background:rgba(255,157,0,0.1); transform: translateZ(18px); }
+    .ctrl-stick-l { top:80px; left:88px; }
+    .ctrl-stick-r { top:80px; left:148px; }
+    /* Touchpad */
+    .ctrl-touchpad { position:absolute; width:48px; height:30px; top:72px; left:116px; border-radius:4px; border:1.5px solid #555; background:rgba(255,255,255,0.03); transform: translateZ(16px); box-shadow: 0 0 5px rgba(255,255,255,0.1); }
+
+    /* ===== HOLOGRAM 3: VR HEADSET ===== */
+    .holo-vr {
+      width: 280px;
+      height: 200px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-10deg) rotateY(-30deg);
+      transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      animation: vr-idle-float 7s ease-in-out infinite;
+    }
+    @keyframes vr-idle-float {
+      0%, 100% { transform: rotateX(-10deg) rotateY(-30deg) translateY(0); }
+      50%       { transform: rotateX(-10deg) rotateY(-30deg) translateY(-14px); }
+    }
+    .vr-face {
+      position: absolute;
+      border: 1.5px solid var(--neon-red);
+      background: rgba(255,42,42,0.05);
+      box-shadow: inset 0 0 15px var(--neon-red-dim), 0 0 10px var(--neon-red-dim);
+    }
+    /* Main visor box: 260x130x100 depth 60 */
+    .vr-front  { width:220px; height:130px; top:20px; left:30px; transform: translateZ(40px); border-color: var(--neon-amber); background:rgba(255,157,0,0.06); box-shadow: inset 0 0 20px var(--neon-amber-dim), 0 0 15px var(--neon-amber-dim); }
+    .vr-back   { width:220px; height:130px; top:20px; left:30px; transform: rotateY(180deg) translateZ(40px) translateX(-220px); }
+    .vr-top    { width:220px; height:80px;  top:20px; left:30px; transform: rotateX(90deg) translateZ(80px) translateY(-40px) translateZ(-40px); border-color: var(--neon-amber); background:rgba(255,157,0,0.04); }
+    .vr-bottom { width:220px; height:80px;  top:150px; left:30px; transform: rotateX(-90deg) translateZ(40px) translateZ(-40px); }
+    .vr-right  { width:80px;  height:130px; top:20px; left:210px; transform: rotateY(90deg) translateZ(40px); border-color: var(--neon-amber); background:rgba(255,157,0,0.04); }
+    .vr-left   { width:80px;  height:130px; top:20px; left:30px;  transform: rotateY(-90deg) translateZ(40px); border-color: var(--neon-amber); background:rgba(255,157,0,0.04); }
+    /* Lenses on front face */
+    .vr-lens { position:absolute; border-radius:50%; border:2px solid var(--neon-red); transform: translateZ(42px); animation: lens-pulse 2s ease-in-out infinite alternate; }
+    .vr-lens-l { width:64px; height:64px; top:53px; left:58px;  background: radial-gradient(circle, rgba(255,42,42,0.3) 0%, rgba(0,0,0,0) 70%); box-shadow: 0 0 20px var(--neon-red), inset 0 0 20px var(--neon-red-dim); }
+    .vr-lens-r { width:64px; height:64px; top:53px; left:158px; background: radial-gradient(circle, rgba(255,42,42,0.3) 0%, rgba(0,0,0,0) 70%); box-shadow: 0 0 20px var(--neon-red), inset 0 0 20px var(--neon-red-dim); }
+    .vr-lens-bridge { position:absolute; width:34px; height:10px; top:80px; left:123px; transform: translateZ(42px); border: 1.5px solid var(--neon-amber); background:rgba(255,157,0,0.1); }
+    /* Strap left */
+    .vr-strap-l { position:absolute; width:50px; height:16px; top:77px; left:-12px; transform: translateZ(20px) rotateY(15deg); border:1.5px solid #333; background:rgba(255,255,255,0.03); }
+    /* Strap right */
+    .vr-strap-r { position:absolute; width:50px; height:16px; top:77px; left:242px; transform: translateZ(20px) rotateY(-15deg); border:1.5px solid #333; background:rgba(255,255,255,0.03); }
+    @keyframes lens-pulse {
+      from { box-shadow: 0 0 15px var(--neon-red), inset 0 0 15px var(--neon-red-dim); }
+      to   { box-shadow: 0 0 35px var(--neon-red), inset 0 0 35px var(--neon-red); }
+    }
+    /* Scan line effect on front face */
+    .vr-scanline { position:absolute; width:220px; height:2px; top:20px; left:30px; transform: translateZ(43px); background: linear-gradient(90deg, transparent, var(--neon-amber), transparent); animation: vr-scan 2.5s linear infinite; opacity:0.7; }
+    @keyframes vr-scan {
+      0%   { top: 22px; opacity: 0.7; }
+      90%  { opacity: 0.7; }
+      100% { top: 148px; opacity: 0; }
+    }
+
+    /* ===== ORBIT RING (shared decoration) ===== */
+    .orbit-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px dashed rgba(255,157,0,0.4);
+      pointer-events: none;
+      animation: orbit-spin 12s linear infinite;
+      top: 50%; left: 50%;
+    }
+    .orbit-ring-1 { width:360px; height:360px; margin: -180px 0 0 -180px; border-color: rgba(255,42,42,0.25); animation-duration: 14s; }
+    .orbit-ring-2 { width:420px; height:420px; margin: -210px 0 0 -210px; border-color: rgba(255,157,0,0.2); animation-duration: 20s; animation-direction: reverse; }
+    @keyframes orbit-spin { from { transform: rotateZ(0deg) rotateX(75deg); } to { transform: rotateZ(360deg) rotateX(75deg); } }
+
+    /* Indicator dots (which hologram is active) */
+    .holo-indicators {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+    .holo-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      border: 1px solid var(--neon-amber);
+      background: transparent;
+      transition: background 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .holo-dot.active {
+      background: var(--neon-amber);
+      box-shadow: 0 0 8px var(--neon-amber);
+    }
+
+    /* Apps Section */
+    .apps-section {
+      padding: 5rem 10%;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--neon-red), transparent);
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .app-card {
+      position: relative;
+      padding: 1.5px; /* Border thickness */
+      background: var(--border-color); /* Fallback border color */
+      clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.3s ease;
+      overflow: hidden;
+      display: flex;
+    }
+
+    /* Glow track */
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle 130px at var(--mouse-x, -9999px) var(--mouse-y, -9999px), var(--neon-red) 0%, var(--neon-amber) 55%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .app-card:hover {
+      transform: translateY(-6px);
+      filter: drop-shadow(0 12px 24px rgba(255, 42, 42, 0.25)) drop-shadow(0 0 8px rgba(255, 157, 0, 0.15));
+    }
+
+    .app-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-content {
+      background: var(--bg-color-alt);
+      padding: 2rem;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(19px 0, 100% 0, 100% calc(100% - 19px), calc(100% - 19px) 100%, 0 100%, 0 19px);
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-border {
+      display: none;
+    }
+
+    .app-icon {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 1.5rem;
+    }
+
+    .icon-red {
+      color: var(--neon-red);
+    }
+
+    .icon-amber {
+      color: var(--neon-amber);
+    }
+
+    .app-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .app-desc {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      min-height: 80px;
+    }
+
+    .app-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+    }
+
+    .price {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--neon-amber);
+    }
+
+    .buy-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: var(--font-heading);
+      font-weight: bold;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .buy-btn::before {
+      content: '>>';
+      color: var(--neon-red);
+      margin-right: 5px;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      transform: translateX(-10px);
+      display: inline-block;
+    }
+
+    .app-card:hover .buy-btn::before {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Banner */
+    .banner {
+      margin: 5rem 10%;
+      padding: 4rem;
+      background: linear-gradient(45deg, rgba(255, 42, 42, 0.1), rgba(255, 157, 0, 0.1));
+      border: 1px solid var(--border-color);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-red), transparent);
+    }
+
+    .banner h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--neon-amber);
+    }
+
+    .banner p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 3rem 10%;
+      border-top: 1px solid var(--border-color);
+      background: #000;
+      text-align: center;
+    }
+
+    .footer-text {
+      color: #555;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* Animations */
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes rotate-reverse {
+      from {
+        transform: rotate(360deg);
+      }
+
+      to {
+        transform: rotate(0deg);
+      }
+    }
+
+    @keyframes pulse {
+      from {
+        transform: scale(0.9);
+        opacity: 0.8;
+      }
+
+      to {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+    }
+
+    /* Scroll Fade In Animation */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .delay-1 {
+      transition-delay: 0.2s;
+    }
+
+    .delay-2 {
+      transition-delay: 0.4s;
+    }
+
+    /* Glitch Effect */
+    .glitch {
+      position: relative;
+      color: white;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-color);
+    }
+
+    .glitch::before {
+      left: 2px;
+      text-shadow: -1px 0 var(--neon-red);
+      clip: rect(44px, 450px, 56px, 0);
+      animation: glitch-anim 5s infinite linear alternate-reverse;
+    }
+
+    .glitch::after {
+      left: -2px;
+      text-shadow: -1px 0 #00ffff;
+      clip: rect(44px, 450px, 56px, 0);
+      animation: glitch-anim2 5s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-anim {
+      0% {
+        clip: rect(10px, 9999px, 31px, 0);
+      }
+
+      5% {
+        clip: rect(70px, 9999px, 73px, 0);
+      }
+
+      10% {
+        clip: rect(29px, 9999px, 86px, 0);
+      }
+
+      15% {
+        clip: rect(14px, 9999px, 80px, 0);
+      }
+
+      20% {
+        clip: rect(93px, 9999px, 60px, 0);
+      }
+
+      25% {
+        clip: rect(55px, 9999px, 49px, 0);
+      }
+
+      30% {
+        clip: rect(86px, 9999px, 83px, 0);
+      }
+
+      35% {
+        clip: rect(48px, 9999px, 35px, 0);
+      }
+
+      40% {
+        clip: rect(2px, 9999px, 2px, 0);
+      }
+
+      45% {
+        clip: rect(66px, 9999px, 62px, 0);
+      }
+
+      50% {
+        clip: rect(69px, 9999px, 59px, 0);
+      }
+
+      55% {
+        clip: rect(60px, 9999px, 7px, 0);
+      }
+
+      60% {
+        clip: rect(9px, 9999px, 37px, 0);
+      }
+
+      65% {
+        clip: rect(61px, 9999px, 8px, 0);
+      }
+
+      70% {
+        clip: rect(78px, 9999px, 56px, 0);
+      }
+
+      75% {
+        clip: rect(17px, 9999px, 69px, 0);
+      }
+
+      80% {
+        clip: rect(40px, 9999px, 74px, 0);
+      }
+
+      85% {
+        clip: rect(96px, 9999px, 90px, 0);
+      }
+
+      90% {
+        clip: rect(23px, 9999px, 2px, 0);
+      }
+
+      95% {
+        clip: rect(41px, 9999px, 20px, 0);
+      }
+
+      100% {
+        clip: rect(9px, 9999px, 95px, 0);
+      }
+    }
+
+    @keyframes glitch-anim2 {
+      0% {
+        clip: rect(15px, 9999px, 65px, 0);
+      }
+
+      5% {
+        clip: rect(68px, 9999px, 89px, 0);
+      }
+
+      10% {
+        clip: rect(40px, 9999px, 55px, 0);
+      }
+
+      15% {
+        clip: rect(91px, 9999px, 34px, 0);
+      }
+
+      20% {
+        clip: rect(50px, 9999px, 60px, 0);
+      }
+
+      25% {
+        clip: rect(95px, 9999px, 2px, 0);
+      }
+
+      30% {
+        clip: rect(27px, 9999px, 81px, 0);
+      }
+
+      35% {
+        clip: rect(80px, 9999px, 54px, 0);
+      }
+
+      40% {
+        clip: rect(19px, 9999px, 95px, 0);
+      }
+
+      45% {
+        clip: rect(3px, 9999px, 73px, 0);
+      }
+
+      50% {
+        clip: rect(31px, 9999px, 80px, 0);
+      }
+
+      55% {
+        clip: rect(73px, 9999px, 59px, 0);
+      }
+
+      60% {
+        clip: rect(84px, 9999px, 52px, 0);
+      }
+
+      65% {
+        clip: rect(71px, 9999px, 34px, 0);
+      }
+
+      70% {
+        clip: rect(33px, 9999px, 88px, 0);
+      }
+
+      75% {
+        clip: rect(83px, 9999px, 1px, 0);
+      }
+
+      80% {
+        clip: rect(62px, 9999px, 37px, 0);
+      }
+
+      85% {
+        clip: rect(64px, 9999px, 16px, 0);
+      }
+
+      90% {
+        clip: rect(23px, 9999px, 90px, 0);
+      }
+
+      95% {
+        clip: rect(36px, 9999px, 20px, 0);
+      }
+
+      100% {
+        clip: rect(15px, 9999px, 75px, 0);
+      }
+    }
+
+    /* Intro Overlay */
+    .intro-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--bg-color);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+      overflow: hidden;
+    }
+
+    .intro-content {
+      text-align: center;
+      z-index: 2;
+    }
+
+    .intro-logo {
+      font-family: var(--font-heading);
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-bottom: 2rem;
+      letter-spacing: 5px;
+    }
+
+    .intro-status {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--neon-amber);
+      margin-bottom: 1rem;
+      height: 24px;
+    }
+
+    .intro-progress-bar {
+      width: 300px;
+      height: 4px;
+      background: var(--border-color);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .intro-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: var(--neon-red);
+      box-shadow: 0 0 10px var(--neon-red);
+      transition: width 0.1s linear;
+    }
+
+    .aura-blast {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, var(--neon-red) 0%, var(--neon-amber) 50%, transparent 80%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .aura-blast.explode {
+      animation: aura-explosion 1.5s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes aura-explosion {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+      }
+
+      40% {
+        opacity: 0.9;
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(300);
+        opacity: 0;
+      }
+    }
+
+    .intro-overlay.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 5rem;
+      }
+
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .hero-visual {
+        margin-top: 3rem;
+        transform: scale(0.7);
+      }
+    }
+
+    /* ===== NEURAL LINK CONNECT MODAL ===== */
+    .connect-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(5, 5, 5, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .connect-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .connect-modal {
+      background: #0a0a0a;
+      width: 90%;
+      max-width: 500px;
+      clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+      padding: 2px; /* border thickness */
+      background: linear-gradient(135deg, var(--neon-red), var(--neon-amber));
+      box-shadow: 0 20px 50px rgba(255, 42, 42, 0.25);
+      transform: scale(0.9);
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .connect-modal-overlay.active .connect-modal {
+      transform: scale(1);
+    }
+
+    .connect-modal-inner {
+      background: #050505;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(19px 0, 100% 0, 100% calc(100% - 19px), calc(100% - 19px) 100%, 0 100%, 0 19px);
+      padding: 2rem;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      color: var(--neon-amber);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--neon-red);
+    }
+
+    .terminal-container {
+      background: #020202;
+      border: 1px solid #111;
+      padding: 1.2rem;
+      font-family: monospace;
+      color: #39ff14; /* Matrix Green */
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .terminal-log {
+      max-height: 120px;
+      overflow-y: auto;
+      line-height: 1.5;
+    }
+
+    .terminal-log p {
+      margin-bottom: 4px;
+    }
+
+    .terminal-progress-container {
+      height: 4px;
+      background: #111;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .terminal-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #39ff14;
+      box-shadow: 0 0 8px #39ff14;
+      transition: width 0.1s linear;
+    }
+
+    .connect-success-details {
+      animation: fade-in-up 0.5s ease forwards;
+    }
+
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-family: var(--font-heading);
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 2px;
+      margin-bottom: 1rem;
+    }
+
+    .status-badge.success {
+      background: rgba(57, 255, 20, 0.15);
+      border: 1px solid #39ff14;
+      color: #39ff14;
+      box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+    }
+
+    .success-info {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .success-info p {
+      margin-bottom: 0.5rem;
+    }
+
+    .success-info strong {
+      color: var(--text-main);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .modal-actions button {
+      flex: 1;
+    }
+
+    .cyber-button-sm.disconnect {
+      border-color: #555;
+      color: var(--text-muted);
+    }
+
+    .cyber-button-sm.disconnect:hover {
+      background: rgba(255,255,255,0.05);
+      box-shadow: none;
+      text-shadow: none;
+      color: var(--text-main);
+    }
+
+    .cyber-button-sm.chat {
+      border-color: #39ff14;
+      color: #39ff14;
+    }
+
+    .cyber-button-sm.chat:hover {
+      background: rgba(57, 255, 20, 0.15);
+      box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+      text-shadow: 0 0 5px #39ff14;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Intro Overlay -->
+  <div class="intro-overlay" id="introOverlay">
+    <div class="intro-content">
+      <div class="intro-logo glitch" data-text="SYSTEM">SYSTEM</div>
+      <div class="intro-status" id="introStatus">INITIALIZING CORE...</div>
+      <div class="intro-progress-bar">
+        <div class="intro-progress" id="introProgress"></div>
+      </div>
+    </div>
+    <div class="aura-blast" id="auraBlast"></div>
+  </div>
+
+  <div class="cursor-glow"></div>
+  <div class="grid-overlay"></div>
+
+  <nav class="navbar">
+    <div class="logo">
+      <span class="glitch" data-text="NEXUS">NEXUS</span>
+      <span class="badge">PRO</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#home" class="active">STORE</a></li>
+      <li><a href="#apps">APPS</a></li>
+      <li><a href="#about">ABOUT</a></li>
+    </ul>
+    <button class="cyber-button-sm" id="connectBtn">CONNECT</button>
+  </nav>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-content fade-in">
+        <h1 class="hero-title">
+          ELEVATE YOUR <span class="text-neon-amber">SYSTEM</span>
+        </h1>
+        <p class="hero-subtitle">
+          Premium, high-performance applications designed for the elite. Unlock the next level of your workflow with our
+          cutting-edge tools.
+        </p>
+        <div class="hero-actions">
+          <button class="cyber-button" onclick="document.getElementById('apps').scrollIntoView({behavior: 'smooth'})">
+            <span class="button-text">EXPLORE APPS</span>
+            <span class="button-glitch"></span>
+          </button>
+        </div>
+      </div>
+      <div class="hero-visual fade-in delay-1" id="heroVisual">
+        <!-- Orbit decorations -->
+        <div class="orbit-ring orbit-ring-1"></div>
+        <div class="orbit-ring orbit-ring-2"></div>
+
+        <!-- Glitch flash overlay -->
+        <div class="glitch-flash" id="glitchFlash"></div>
+
+        <!-- Hologram Stage -->
+        <div class="hologram-stage" id="hologramStage">
+
+          <!-- HOLO 1: Tesseract -->
+          <div class="holo-object active" id="holo-0">
+            <div class="cyber-tesseract" id="tesseract">
+              <div class="cube cube-outer">
+                <div class="face front"></div><div class="face back"></div>
+                <div class="face right"></div><div class="face left"></div>
+                <div class="face top"></div><div class="face bottom"></div>
+              </div>
+              <div class="cube cube-inner">
+                <div class="face front"></div><div class="face back"></div>
+                <div class="face right"></div><div class="face left"></div>
+                <div class="face top"></div><div class="face bottom"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HOLO 2: PS Controller -->
+          <div class="holo-object" id="holo-1">
+            <div class="holo-controller" id="controller">
+              <div class="ctrl-face ctrl-front"></div>
+              <div class="ctrl-face ctrl-back"></div>
+              <div class="ctrl-face ctrl-top-body"></div>
+              <div class="ctrl-face ctrl-bottom-body"></div>
+              <div class="ctrl-face ctrl-side-r"></div>
+              <div class="ctrl-face ctrl-side-l"></div>
+              <div class="ctrl-face ctrl-grip-l"></div>
+              <div class="ctrl-face ctrl-grip-l-side"></div>
+              <div class="ctrl-face ctrl-grip-r"></div>
+              <div class="ctrl-face ctrl-grip-r-side"></div>
+              <div class="ctrl-dpad-h"></div>
+              <div class="ctrl-dpad-v"></div>
+              <div class="ctrl-btn ctrl-btn-x"></div>
+              <div class="ctrl-btn ctrl-btn-o"></div>
+              <div class="ctrl-btn ctrl-btn-t"></div>
+              <div class="ctrl-btn ctrl-btn-s"></div>
+              <div class="ctrl-stick ctrl-stick-l"></div>
+              <div class="ctrl-stick ctrl-stick-r"></div>
+              <div class="ctrl-touchpad"></div>
+            </div>
+          </div>
+
+          <!-- HOLO 3: VR Headset -->
+          <div class="holo-object" id="holo-2">
+            <div class="holo-vr" id="vrHeadset">
+              <div class="vr-face vr-front"></div>
+              <div class="vr-face vr-back"></div>
+              <div class="vr-face vr-top"></div>
+              <div class="vr-face vr-bottom"></div>
+              <div class="vr-face vr-right"></div>
+              <div class="vr-face vr-left"></div>
+              <div class="vr-lens vr-lens-l"></div>
+              <div class="vr-lens vr-lens-r"></div>
+              <div class="vr-lens-bridge"></div>
+              <div class="vr-strap-l"></div>
+              <div class="vr-strap-r"></div>
+              <div class="vr-scanline"></div>
+            </div>
+          </div>
+
+        </div><!-- /hologram-stage -->
+
+        <!-- Indicator dots -->
+        <div class="holo-indicators" id="holoIndicators">
+          <div class="holo-dot active" data-idx="0"></div>
+          <div class="holo-dot" data-idx="1"></div>
+          <div class="holo-dot" data-idx="2"></div>
+        </div>
+
+        <div class="holo-label" id="holoLabel">// TESSERACT MODEL //</div>
+      </div>
+    </section>
+
+    <section id="apps" class="apps-section">
+      <h2 class="section-title fade-in">
+        <span class="text-neon-red">//</span> FEATURED APPLICATIONS
+      </h2>
+
+      <div class="app-grid">
+        <!-- App Card 1 -->
+        <div class="app-card fade-in">
+          <div class="card-border"></div>
+          <div class="card-content">
+            <img src="assets/perfecttimer.png"
+              style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
+              alt="Perfect Timer">
+            <h3 class="app-title">PERFECT TIMER</h3>
+            <p class="app-desc">Stop the timer exactly at the target. Test your reflexes and precision.</p>
+            <div class="app-meta">
+              <span class="price">Rp 50.000</span>
+              <button class="buy-btn">ACQUIRE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- App Card 2 -->
+        <div class="app-card fade-in delay-1">
+          <div class="card-border"></div>
+          <div class="card-content">
+            <img src="assets/thumbnailjusthalfit.png"
+              style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
+              alt="Just Half It">
+            <h3 class="app-title">JUST HALF IT</h3>
+            <p class="app-desc">Can you slice it perfectly in half? A game of spatial awareness.</p>
+            <div class="app-meta">
+              <span class="price">Rp 75.000</span>
+              <button class="buy-btn">ACQUIRE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- App Card 3 -->
+        <div class="app-card fade-in delay-2">
+          <div class="card-border"></div>
+          <div class="card-content">
+            <img src="assets/thumbnailsambungkata.png"
+              style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
+              alt="Sambung Kata">
+            <h3 class="app-title">SAMBUNG KATA</h3>
+            <p class="app-desc">A fast-paced word chaining game. Think fast, type faster.</p>
+            <div class="app-meta">
+              <span class="price">Rp 85.000</span>
+              <button class="buy-btn">ACQUIRE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- App Card 4 -->
+        <div class="app-card fade-in">
+          <div class="card-border"></div>
+          <div class="card-content">
+            <img src="assets/thumbnailsequencerush.png"
+              style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
+              alt="Sequence Rush">
+            <h3 class="app-title">SEQUENCE RUSH</h3>
+            <p class="app-desc">Memorize and repeat the pattern before the time runs out.</p>
+            <div class="app-meta">
+              <span class="price">Rp 90.000</span>
+              <button class="buy-btn">ACQUIRE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- App Card 5 -->
+        <div class="app-card fade-in delay-1">
+          <div class="card-border"></div>
+          <div class="card-content">
+            <img src="assets/thumnailkachingataukaboom.png"
+              style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
+              alt="Kaching or Kaboom">
+            <h3 class="app-title">KACHING OR KABOOM</h3>
+            <p class="app-desc">Press your luck. Defuse the bomb or walk away with the cash.</p>
+            <div class="app-meta">
+              <span class="price">Rp 99.000</span>
+              <button class="buy-btn">ACQUIRE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="banner fade-in">
+      <div class="banner-content">
+        <h2>SYSTEM OVERRIDE INITIATED</h2>
+        <p>Get the complete master bundle with a 40% discount.</p>
+        <button class="cyber-button accent">
+          <span class="button-text">INITIALIZE OVERRIDE</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="logo">
+        <span class="glitch" data-text="NEXUS">NEXUS</span>
+      </div>
+      <p class="footer-text">© 2077 NEXUS MARKETPLACE. ALL RIGHTS RESERVED.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Intro Sequence
+    const introOverlay = document.getElementById('introOverlay');
+    const introStatus = document.getElementById('introStatus');
+    const introProgress = document.getElementById('introProgress');
+    const auraBlast = document.getElementById('auraBlast');
+
+    const bootSequence = [
+      "INITIALIZING CORE...",
+      "LOADING NEURAL NETWORKS...",
+      "BYPASSING SECURITY PROTOCOLS...",
+      "ESTABLISHING UPLINK...",
+      "SYSTEM ONLINE."
+    ];
+
+    let currentStep = 0;
+    let progress = 0;
+
+    function runIntro() {
+      document.body.style.overflow = 'hidden'; // Prevent scrolling during intro
+      window.scrollTo(0, 0); // Force scroll to top
+
+      const progressInterval = setInterval(() => {
+        progress += Math.random() * 5 + 1; // random progress increments
+        if (progress > 100) progress = 100;
+
+        introProgress.style.width = `${progress}%`;
+
+        if (progress > (currentStep + 1) * 20 && currentStep < bootSequence.length - 1) {
+          currentStep++;
+          introStatus.innerText = bootSequence[currentStep];
+        }
+
+        if (progress === 100) {
+          clearInterval(progressInterval);
+          introStatus.innerText = "ACCESS GRANTED";
+          introStatus.style.color = "var(--neon-red)";
+
+          setTimeout(() => {
+            auraBlast.classList.add('explode');
+
+            // Hide overlay midway through explosion for seamless transition
+            setTimeout(() => {
+              introOverlay.classList.add('hide');
+              document.body.style.overflow = 'auto'; // Restore scrolling
+
+              // Trigger initial fade-ins for elements already in viewport
+              const fadeElements = document.querySelectorAll('.fade-in');
+              fadeElements.forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) {
+                  el.classList.add('visible');
+                }
+              });
+            }, 600);
+          }, 500);
+        }
+      }, 60); // fast interval for intense feel
+    }
+
+    // Start intro immediately
+    runIntro();
+
+    // Custom Cursor Glow Effect
+    document.addEventListener('mousemove', (e) => {
+      const cursor = document.querySelector('.cursor-glow');
+      if (cursor) {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+      }
+    });
+
+    // Intersection Observer for Fade-In animations
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target); // Stop observing once it's visible
+        }
+      });
+    }, observerOptions);
+
+    // Select all elements with fade-in class
+    document.addEventListener('DOMContentLoaded', () => {
+      const fadeElements = document.querySelectorAll('.fade-in');
+      fadeElements.forEach(el => {
+        observer.observe(el);
+      });
+    });
+
+    // ===== HOLOGRAM CAROUSEL + MOUSE TRACKING =====
+    const heroVisual   = document.getElementById('heroVisual');
+    const glitchFlash  = document.getElementById('glitchFlash');
+    const holoLabel    = document.getElementById('holoLabel');
+    const dots         = document.querySelectorAll('.holo-dot');
+
+    // Default transforms & labels for each hologram
+    const HOLOS = [
+      { id: 'tesseract',  el: null, defaultRX: -20, defaultRY: 45,  rangeRX: 35, rangeRY: 45, label: '// TESSERACT MODEL //' },
+      { id: 'controller', el: null, defaultRX: -15, defaultRY: 25,  rangeRX: 25, rangeRY: 35, label: '// CONTROLLER-01 //' },
+      { id: 'vrHeadset',  el: null, defaultRX: -10, defaultRY: -30, rangeRX: 20, rangeRY: 30, label: '// VR UNIT-X //' },
+    ];
+    HOLOS.forEach(h => h.el = document.getElementById(h.id));
+
+    let activeIdx = 0;
+    let isGlitching = false;
+
+    function setHologram(idx) {
+      // Hide all
+      document.querySelectorAll('.holo-object').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      holoLabel.textContent = HOLOS[idx].label;
+      activeIdx = idx;
+    }
+
+    function triggerGlitchTransition(nextIdx) {
+      if (isGlitching) return;
+      isGlitching = true;
+
+      // Phase 1: glitch flash in
+      glitchFlash.classList.remove('firing');
+      void glitchFlash.offsetWidth; // force reflow
+      glitchFlash.classList.add('firing');
+
+      // Phase 2: swap mid-glitch
+      setTimeout(() => setHologram(nextIdx), 350);
+
+      // Phase 3: clean up
+      setTimeout(() => {
+        glitchFlash.classList.remove('firing');
+        isGlitching = false;
+      }, 750);
+    }
+
+    // Auto-cycle every 10 seconds
+    let cycleTimer = setInterval(() => {
+      triggerGlitchTransition((activeIdx + 1) % HOLOS.length);
+    }, 10000);
+
+    // Dot click manual control
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const idx = parseInt(dot.dataset.idx);
+        if (idx === activeIdx) return;
+        clearInterval(cycleTimer);
+        triggerGlitchTransition(idx);
+        cycleTimer = setInterval(() => {
+          triggerGlitchTransition((activeIdx + 1) % HOLOS.length);
+        }, 10000);
+      });
+    });
+
+    // Mouse tracking for the active hologram
+    let targetRX = 0, targetRY = 0;
+    let currentRX = 0, currentRY = 0;
+    let mouseInside = false;
+    let rafId;
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function animateReturn() {
+      const h = HOLOS[activeIdx];
+      if (!h.el) return;
+
+      const speed = mouseInside ? 0.15 : 0.04; // slow lerp on mouse-out
+      currentRX = lerp(currentRX, targetRX, speed);
+      currentRY = lerp(currentRY, targetRY, speed);
+
+      const dRX = Math.abs(currentRX - targetRX);
+      const dRY = Math.abs(currentRY - targetRY);
+
+      h.el.style.transform = `rotateX(${currentRX + h.defaultRX}deg) rotateY(${currentRY + h.defaultRY}deg)`;
+      h.el.style.transition = 'none'; // handled by JS lerp
+
+      if (dRX > 0.05 || dRY > 0.05 || mouseInside) {
+        rafId = requestAnimationFrame(animateReturn);
+      } else {
+        // Snap perfectly to default and stop
+        h.el.style.transform = `rotateX(${h.defaultRX}deg) rotateY(${h.defaultRY}deg)`;
+        currentRX = 0;
+        currentRY = 0;
+      }
+    }
+
+    heroVisual.addEventListener('mousemove', (e) => {
+      const h = HOLOS[activeIdx];
+      const rect = heroVisual.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      targetRY = ((x - cx) / cx) * h.rangeRY;
+      targetRX = -((y - cy) / cy) * h.rangeRX;
+      if (!mouseInside) {
+        mouseInside = true;
+        cancelAnimationFrame(rafId);
+        animateReturn();
+      }
+    });
+
+    heroVisual.addEventListener('mouseleave', () => {
+      mouseInside = false;
+      targetRX = 0;
+      targetRY = 0;
+      cancelAnimationFrame(rafId);
+      animateReturn();
+    });
+
+    // ===== BORDER GLOW DYNAMIC MOUSE TRACKING =====
+    document.querySelectorAll('.app-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+
+    // ===== WHATSAPP ACQUIRE INTEGRATIONS =====
+    const adminPhone = "6285219583336";
+
+    // Handle ACQUIRE button clicks
+    document.querySelectorAll('.app-card').forEach(card => {
+      const buyBtn = card.querySelector('.buy-btn');
+      if (buyBtn) {
+        buyBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const title = card.querySelector('.app-title').textContent.trim();
+          const price = card.querySelector('.price').textContent.trim();
+          const message = `Hello NEXUS, I'd like to acquire the application: *${title}* (${price}). Please guide me through the setup.`;
+          const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+          window.open(waUrl, '_blank');
+        });
+      }
+    });
+
+    // Handle Master Bundle banner button click
+    const bundleBtn = document.querySelector('.banner .cyber-button');
+    if (bundleBtn) {
+      bundleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const message = "Hello NEXUS, I want to initialize the *SYSTEM OVERRIDE* master bundle (40% discount)! Please let me know how to proceed.";
+        const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+        window.open(waUrl, '_blank');
+      });
+    }
+
+    // ===== NEURAL UPLINK CONNECT SIMULATION =====
+    const navbarConnectBtn = document.getElementById('connectBtn');
+    const connectModal = document.getElementById('connectModal');
+    const closeConnectModal = document.getElementById('closeConnectModal');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const chatAdminBtn = document.getElementById('chatAdminBtn');
+    const terminalLog = document.getElementById('terminalLog');
+    const terminalProgressBar = document.getElementById('terminalProgressBar');
+    const terminalContainer = document.querySelector('.terminal-container');
+    const connectSuccessDetails = document.getElementById('connectSuccessDetails');
+
+    let progressInterval;
+
+    const connectionLogs = [
+      "PINGING SUBNET PROXY [109.88.22.44]...",
+      "DECK SECURITY PROTOCOLS BYPASSED.",
+      "INJECTING NEXUS TERMINAL PAYLOAD...",
+      "DECRYPTING ENCRYPTION SYMBOLS...",
+      "AUTHENTICATING HOST PROTOCOLS...",
+      "UPLINK ROUTE STABILIZED.",
+      "HANDSHAKE COMPLETE. SECURE CONNECTION ACTIVE."
+    ];
+
+    function showConnectModal() {
+      connectModal.classList.add('active');
+      terminalLog.innerHTML = "";
+      terminalProgressBar.style.width = "0%";
+      terminalContainer.style.display = "flex";
+      connectSuccessDetails.style.display = "none";
+      
+      let logIndex = 0;
+      let currentProgress = 0;
+      
+      function printNextLog() {
+        if (!connectModal.classList.contains('active')) return;
+        if (logIndex < connectionLogs.length) {
+          const logLine = document.createElement('p');
+          logLine.textContent = `> ${connectionLogs[logIndex]}`;
+          terminalLog.appendChild(logLine);
+          terminalLog.scrollTop = terminalLog.scrollHeight;
+          logIndex++;
+          
+          setTimeout(printNextLog, 300 + Math.random() * 300);
+        }
+      }
+
+      printNextLog();
+
+      progressInterval = setInterval(() => {
+        currentProgress += Math.random() * 6 + 3;
+        if (currentProgress >= 100) {
+          currentProgress = 100;
+          clearInterval(progressInterval);
+          
+          setTimeout(() => {
+            if (!connectModal.classList.contains('active')) return;
+            terminalContainer.style.display = "none";
+            connectSuccessDetails.style.display = "block";
+            
+            // Visual change to nav button
+            navbarConnectBtn.textContent = "CONNECTED";
+            navbarConnectBtn.style.borderColor = "#39ff14";
+            navbarConnectBtn.style.color = "#39ff14";
+            navbarConnectBtn.style.textShadow = "0 0 8px rgba(57, 255, 20, 0.6)";
+          }, 400);
+        }
+        terminalProgressBar.style.width = `${currentProgress}%`;
+      }, 100);
+    }
+
+    function closeConnectModalWindow() {
+      connectModal.classList.remove('active');
+      clearInterval(progressInterval);
+    }
+
+    function handleDisconnect() {
+      closeConnectModalWindow();
+      navbarConnectBtn.textContent = "CONNECT";
+      navbarConnectBtn.style.borderColor = "var(--neon-red)";
+      navbarConnectBtn.style.color = "var(--text-main)";
+      navbarConnectBtn.style.textShadow = "none";
+    }
+
+    if (navbarConnectBtn) {
+      navbarConnectBtn.addEventListener('click', showConnectModal);
+    }
+
+    if (closeConnectModal) {
+      closeConnectModal.addEventListener('click', closeConnectModalWindow);
+    }
+
+    if (disconnectBtn) {
+      disconnectBtn.addEventListener('click', handleDisconnect);
+    }
+
+    if (chatAdminBtn) {
+      chatAdminBtn.addEventListener('click', () => {
+        const message = "Hello NEXUS Admin, I have successfully connected my cyberdeck to the marketplace subnet and would like to inquire about system services.";
+        const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+        window.open(waUrl, '_blank');
+      });
+    }
+  </script>
+
+  <!-- Neural Link Connect Modal -->
+  <div class="connect-modal-overlay" id="connectModal">
+    <div class="connect-modal">
+      <div class="connect-modal-inner">
+        <div class="modal-header">
+          <span class="modal-title">// NEURAL UPLINK PORT //</span>
+          <button class="modal-close-btn" id="closeConnectModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="terminal-container">
+            <div class="terminal-log" id="terminalLog">
+              <!-- Dynamic terminal lines go here -->
+            </div>
+            <div class="terminal-progress-container">
+              <div class="terminal-progress-bar" id="terminalProgressBar"></div>
+            </div>
+          </div>
+          <div class="connect-success-details" id="connectSuccessDetails" style="display: none;">
+            <div class="status-badge success">UPLINK ACTIVE</div>
+            <div class="success-info">
+              <p><strong>SECURITY PROXY:</strong> SECURE DECK BYPASS</p>
+              <p><strong>TARGET PROTOCOL:</strong> WA_LINK_ADMIN_6285219583336</p>
+              <p>Your cyberdeck terminal is now connected to the NEXUS core subnet.</p>
+            </div>
+            <div class="modal-actions">
+              <button class="cyber-button-sm disconnect" id="disconnectBtn">DISCONNECT</button>
+              <button class="cyber-button-sm chat" id="chatAdminBtn">CHAT WITH ADMIN</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
