@@ -31,12 +31,28 @@
       box-sizing: border-box;
     }
 
+    /* Hide scrollbar for all browsers */
+    html {
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    html::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, and Opera */
+    }
+
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
       font-family: var(--font-body);
       overflow-x: hidden;
       line-height: 1.6;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
     }
 
     /* Grid Overlay Background */
@@ -239,7 +255,6 @@
       position: relative;
       perspective: 900px;
       min-height: 420px;
-      cursor: crosshair;
     }
 
     /* Stage label */
@@ -279,95 +294,73 @@
     }
     .holo-object.active {
       opacity: 1;
-      pointer-events: auto;
     }
 
-    /* Glitch flash overlay on the stage */
+    /* Smooth slide transition overlay */
     .glitch-flash {
       position: absolute;
-      inset: -20px;
+      inset: -1px;
       z-index: 10;
       pointer-events: none;
       opacity: 0;
+      background: transparent;
     }
     .glitch-flash.firing {
-      animation: stage-glitch 0.7s steps(1) forwards;
+      animation: smooth-slide-transition 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
-    @keyframes stage-glitch {
-      0%   { opacity: 1; background: var(--neon-red); clip-path: inset(60% 0 0 0); }
-      10%  { clip-path: inset(10% 0 70% 0); background: #00ffff; }
-      20%  { clip-path: inset(80% 0 5% 0);  background: var(--neon-red); transform: translateX(8px); }
-      30%  { clip-path: inset(30% 0 50% 0); background: #00ffff; transform: translateX(-8px); }
-      40%  { clip-path: inset(50% 0 20% 0); background: var(--neon-amber); transform: translateX(4px); }
-      50%  { clip-path: inset(5% 0 80% 0);  background: var(--neon-red); transform: translateX(0); }
-      60%  { clip-path: inset(70% 0 10% 0); background: #00ffff; }
-      70%  { clip-path: inset(20% 0 60% 0); background: var(--neon-red); transform: translateX(-4px); }
-      80%  { clip-path: inset(90% 0 2% 0);  background: var(--neon-amber); }
-      90%  { clip-path: inset(40% 0 40% 0); background: #00ffff; transform: translateX(6px); }
-      100% { opacity: 0; }
+    @keyframes smooth-slide-transition {
+      0% {
+        opacity: 0;
+        transform: translateX(0);
+      }
+      50% {
+        opacity: 0.3;
+        transform: translateX(-30px);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-60px);
+      }
     }
 
-    /* ===== HOLOGRAM 1: TESSERACT ===== */
-    .cyber-tesseract {
-      width: 300px;
-      height: 300px;
+    /* ===== HOLOGRAM 1: CYBER HEADPHONE ===== */
+    .holo-headphone {
+      width: 260px;
+      height: 220px;
       position: relative;
       transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(45deg);
-      transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform: rotateX(-10deg) rotateY(22deg);
+      animation: hp-idle-float 7s ease-in-out infinite;
     }
 
-    .cube {
+    @keyframes hp-idle-float {
+      0%, 100% { transform: rotateX(-10deg) rotateY(22deg) translateY(0); }
+      50%       { transform: rotateX(-10deg) rotateY(22deg) translateY(-8px); }
+    }
+
+    .hp-svg-wrap {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 12px rgba(255, 157, 0, 0.25));
+    }
+
+    .hp-glow-ring {
       position: absolute;
-      top: 50%; left: 50%;
-      transform-style: preserve-3d;
-      transform: translate(-50%, -50%);
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 157, 0, 0.35);
+      top: 118px;
+      animation: hp-pulse 3s ease-in-out infinite;
+      pointer-events: none;
     }
 
-    .face {
-      position: absolute;
-      border: 2px solid var(--neon-red);
-      background: rgba(255, 42, 42, 0.05);
-      box-shadow: inset 0 0 20px var(--neon-red-dim), 0 0 20px var(--neon-red-dim);
-      backdrop-filter: blur(2px);
-      transition: border-color 0.5s, box-shadow 0.5s, background 0.5s;
-    }
+    .hp-glow-ring-left  { left: 38px; }
+    .hp-glow-ring-right { right: 38px; animation-delay: 0.6s; }
 
-    .cube-outer .face { width: 200px; height: 200px; top: -100px; left: -100px; }
-    .cube-outer .front  { transform: translateZ(100px); }
-    .cube-outer .back   { transform: rotateY(180deg) translateZ(100px); }
-    .cube-outer .right  { transform: rotateY(90deg) translateZ(100px); }
-    .cube-outer .left   { transform: rotateY(-90deg) translateZ(100px); }
-    .cube-outer .top    { transform: rotateX(90deg) translateZ(100px); }
-    .cube-outer .bottom { transform: rotateX(-90deg) translateZ(100px); }
-
-    .cube-inner .face {
-      width: 100px; height: 100px; top: -50px; left: -50px;
-      border-color: var(--neon-amber);
-      background: rgba(255, 157, 0, 0.1);
-      box-shadow: inset 0 0 30px var(--neon-amber-dim), 0 0 30px var(--neon-amber-dim);
-    }
-    .cube-inner { animation: cube-inner-spin 8s infinite linear; }
-    .cube-inner .front  { transform: translateZ(50px); }
-    .cube-inner .back   { transform: rotateY(180deg) translateZ(50px); }
-    .cube-inner .right  { transform: rotateY(90deg) translateZ(50px); }
-    .cube-inner .left   { transform: rotateY(-90deg) translateZ(50px); }
-    .cube-inner .top    { transform: rotateX(90deg) translateZ(50px); }
-    .cube-inner .bottom { transform: rotateX(-90deg) translateZ(50px); }
-
-    @keyframes cube-inner-spin {
-      0%   { transform: translate(-50%,-50%) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-      100% { transform: translate(-50%,-50%) rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
-    }
-
-    .holo-object.active .cyber-tesseract:hover .cube-outer .face {
-      border-color: var(--neon-amber);
-      box-shadow: inset 0 0 40px var(--neon-amber-dim), 0 0 40px var(--neon-amber-dim);
-      background: rgba(255,157,0,0.12);
-    }
-    .holo-object.active .cyber-tesseract:hover .cube-inner .face {
-      border-color: #fff;
-      box-shadow: 0 0 50px var(--neon-amber), inset 0 0 50px var(--neon-amber);
+    @keyframes hp-pulse {
+      0%, 100% { opacity: 0.35; transform: scale(1); }
+      50%       { opacity: 0.7; transform: scale(1.06); }
     }
 
     /* ===== HOLOGRAM 2: PS CONTROLLER ===== */
@@ -377,7 +370,6 @@
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(-15deg) rotateY(25deg);
-      transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       animation: ctrl-idle-float 6s ease-in-out infinite;
     }
     @keyframes ctrl-idle-float {
@@ -519,7 +511,6 @@
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(-10deg) rotateY(-30deg);
-      transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       animation: vr-idle-float 7s ease-in-out infinite;
     }
     @keyframes vr-idle-float {
@@ -815,6 +806,62 @@
     .app-card:hover .buy-btn::before {
       opacity: 1;
       transform: translateX(0);
+    }
+
+    /* About Section */
+    .about-section {
+      padding: 5rem 10%;
+      background: linear-gradient(180deg, rgba(255, 42, 42, 0.05), rgba(255, 157, 0, 0.05));
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .about-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .about-title {
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      color: var(--neon-amber);
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .about-item {
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+      transition: all 0.3s ease;
+    }
+
+    .about-item:hover {
+      background: rgba(255, 42, 42, 0.08);
+      border-color: var(--neon-red);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(255, 42, 42, 0.15);
+    }
+
+    .about-item h3 {
+      font-size: 1.3rem;
+      color: var(--neon-amber);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .about-item p {
+      color: var(--text-muted);
+      line-height: 1.8;
+      font-size: 0.95rem;
     }
 
     /* Banner */
@@ -1220,51 +1267,6 @@
       pointer-events: none;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hero {
-        flex-direction: column;
-        text-align: center;
-        padding-top: 5rem;
-      }
-
-      .hero-title {
-        font-size: 3rem;
-      }
-
-      .hero-visual {
-        margin-top: 3rem;
-        transform: scale(0.7);
-      }
-
-      .navbar {
-        padding: 1rem 3%;
-      }
-
-      .logo {
-        font-size: 1.1rem;
-        gap: 6px;
-      }
-
-      .badge {
-        font-size: 0.6rem;
-        padding: 1px 4px;
-      }
-
-      .nav-links {
-        gap: 0.8rem;
-      }
-
-      .nav-links a {
-        font-size: 0.75rem;
-      }
-
-      .cyber-button-sm {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.7rem;
-      }
-    }
-
     /* ===== NEURAL LINK CONNECT MODAL ===== */
     .connect-modal-overlay {
       position: fixed;
@@ -1612,6 +1614,343 @@
       opacity: 0.35;
       pointer-events: none;
     }
+
+    /* ===== RESPONSIVE LAYOUT ===== */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem 4%;
+        gap: 0.5rem;
+      }
+
+      .logo {
+        font-size: 1.1rem;
+        gap: 6px;
+      }
+
+      .badge {
+        font-size: 0.6rem;
+        padding: 1px 4px;
+      }
+
+      .nav-links {
+        gap: 0.75rem;
+      }
+
+      .nav-links a {
+        font-size: 0.72rem;
+        letter-spacing: 0;
+      }
+
+      .cyber-button-sm {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.68rem;
+      }
+
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 4rem 5% 2.5rem;
+        min-height: auto;
+        gap: 1rem;
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .hero-title {
+        font-size: clamp(2rem, 9vw, 3rem);
+        letter-spacing: 1px;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .hero-actions {
+        display: flex;
+        justify-content: center;
+      }
+
+      .hero-visual {
+        width: 100%;
+        min-height: 260px;
+        margin-top: 1.5rem;
+        transform: scale(0.72);
+        transform-origin: center top;
+      }
+
+      .hologram-stage {
+        width: 260px;
+        height: 260px;
+      }
+
+      .orbit-ring-1 {
+        width: 300px;
+        height: 300px;
+        margin: -150px 0 0 -150px;
+      }
+
+      .orbit-ring-2 {
+        width: 340px;
+        height: 340px;
+        margin: -170px 0 0 -170px;
+      }
+
+      .holo-label {
+        font-size: 0.6rem;
+        letter-spacing: 2px;
+        bottom: -24px;
+      }
+
+      .apps-section {
+        padding: 3rem 5%;
+      }
+
+      .section-title {
+        font-size: 1.35rem;
+        margin-bottom: 2rem;
+        gap: 10px;
+      }
+
+      .app-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+      }
+
+      .card-content {
+        padding: 1.5rem;
+      }
+
+      .app-title {
+        font-size: 1.25rem;
+      }
+
+      .app-desc {
+        display: none;
+      }
+
+      .app-meta {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .app-actions {
+        width: 100%;
+      }
+
+      .app-actions .detail-btn,
+      .app-actions .buy-btn {
+        flex: 1;
+        text-align: center;
+      }
+
+      .banner {
+        margin: 3rem 5%;
+        padding: 2rem 1.25rem;
+      }
+
+      .banner h2 {
+        font-size: clamp(1.4rem, 6vw, 2rem);
+      }
+
+      .banner p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      footer {
+        padding: 2rem 5%;
+      }
+
+      .intro-logo {
+        font-size: 2.5rem;
+        letter-spacing: 3px;
+      }
+
+      .intro-status {
+        font-size: 0.95rem;
+      }
+
+      .intro-progress-bar {
+        width: min(280px, 80vw);
+      }
+
+      .connect-modal-inner {
+        padding: 1.25rem;
+      }
+
+      .game-detail-header,
+      .game-detail-body {
+        padding: 1.25rem;
+      }
+
+      .game-detail-footer {
+        padding: 1rem 1.25rem 1.25rem;
+        flex-direction: column;
+      }
+
+      .game-detail-footer button,
+      .modal-actions button {
+        width: 100%;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .navbar {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .logo {
+        flex: 1;
+        min-width: 0;
+      }
+
+      #connectBtn {
+        margin-left: auto;
+      }
+
+      .nav-links {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 1rem;
+        padding-top: 0.25rem;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .hero-title {
+        font-size: 1.85rem;
+      }
+
+      .hero-visual {
+        transform: scale(0.6);
+        min-height: 220px;
+      }
+
+      .cyber-button {
+        width: 100%;
+        max-width: 280px;
+        padding: 0.85rem 1.25rem;
+        font-size: 0.85rem;
+      }
+
+      .game-detail-title {
+        font-size: 0.95rem;
+      }
+
+      .game-meta-chip {
+        font-size: 0.58rem;
+      }
+    }
+
+    /* ===== MOBILE / TOUCH: reduce heavy effects ===== */
+    @media (max-width: 768px), (hover: none), (pointer: coarse) {
+      .cursor-glow,
+      #ditherCanvas {
+        display: none !important;
+      }
+
+      .navbar,
+      .connect-modal-overlay,
+      .game-detail-overlay {
+        backdrop-filter: none;
+      }
+
+      .hero-visual {
+        cursor: default;
+      }
+
+      .app-card:hover {
+        transform: none;
+        filter: none;
+      }
+
+      .app-card:hover::before,
+      .app-card::before {
+        opacity: 0 !important;
+      }
+
+      .app-card:hover .buy-btn::before {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+
+      .orbit-ring {
+        animation: none;
+        opacity: 0.35;
+      }
+
+      .holo-controller,
+      .holo-vr,
+      .holo-headphone {
+        animation: none;
+      }
+
+      .vr-scanline {
+        display: none;
+      }
+
+      .glitch::before,
+      .glitch::after {
+        display: none;
+      }
+
+      .glitch-flash.firing {
+        animation: stage-glitch-lite 0.4s ease-out forwards;
+      }
+
+      @keyframes stage-glitch-lite {
+        0% {
+          opacity: 0.5;
+          background: linear-gradient(0deg,
+            transparent 10%,
+            rgba(255,42,42,0.2) 10%,
+            rgba(255,42,42,0.2) 12%,
+            transparent 12%,
+            transparent 50%,
+            rgba(0,255,255,0.15) 50%,
+            rgba(0,255,255,0.15) 52%,
+            transparent 52%);
+          transform: translateX(-2px);
+        }
+        50% {
+          opacity: 0.35;
+          transform: translateX(1px);
+        }
+        100% {
+          opacity: 0;
+          transform: translateX(0);
+        }
+      }
+    }
+
+    body.lite-mode .cursor-glow,
+    body.lite-mode #ditherCanvas {
+      display: none !important;
+    }
+
+    body.lite-mode .orbit-ring,
+    body.lite-mode .holo-headphone,
+    body.lite-mode .holo-controller,
+    body.lite-mode .holo-vr,
+    body.lite-mode .vr-scanline {
+      animation: none;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .cyber-button:active,
+      .cyber-button-sm:active {
+        transform: scale(0.98);
+      }
+    }
   </style>
 </head>
 
@@ -1674,19 +2013,103 @@
         <!-- Hologram Stage -->
         <div class="hologram-stage" id="hologramStage">
 
-          <!-- HOLO 1: Tesseract -->
+          <!-- HOLO 1: Cyber Headphone -->
           <div class="holo-object active" id="holo-0">
-            <div class="cyber-tesseract" id="tesseract">
-              <div class="cube cube-outer">
-                <div class="face front"></div><div class="face back"></div>
-                <div class="face right"></div><div class="face left"></div>
-                <div class="face top"></div><div class="face bottom"></div>
-              </div>
-              <div class="cube cube-inner">
-                <div class="face front"></div><div class="face back"></div>
-                <div class="face right"></div><div class="face left"></div>
-                <div class="face top"></div><div class="face bottom"></div>
-              </div>
+            <div class="holo-headphone" id="headphone">
+              <div class="hp-glow-ring hp-glow-ring-left"></div>
+              <div class="hp-glow-ring hp-glow-ring-right"></div>
+              <svg viewBox="0 0 260 220" class="hp-svg-wrap" aria-hidden="true">
+                <defs>
+                  <linearGradient id="orbitGrad1" x1="0" x2="1" y1="0" y2="1">
+                    <stop offset="0" stop-color="var(--neon-amber)"/>
+                    <stop offset="100%" stop-color="#ff7700"/>
+                  </linearGradient>
+                  <linearGradient id="orbitGrad2" x1="0" x2="1" y1="0" y2="1">
+                    <stop offset="0" stop-color="var(--neon-red)"/>
+                    <stop offset="100%" stop-color="#ff4444"/>
+                  </linearGradient>
+                  <linearGradient id="orbitGrad3" x1="0" x2="1" y1="0" y2="1">
+                    <stop offset="0" stop-color="#00ffff"/>
+                    <stop offset="100%" stop-color="#0099ff"/>
+                  </linearGradient>
+                  <radialGradient id="nucleusGrad">
+                    <stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/>
+                    <stop offset="70%" stop-color="var(--neon-red)" stop-opacity="0.7"/>
+                    <stop offset="100%" stop-color="#ff4444" stop-opacity="0.4"/>
+                  </radialGradient>
+                  <filter id="atomGlow">
+                    <feGaussianBlur stdDeviation="2.5"/>
+                    <feMerge>
+                      <feMergeNode/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                  <filter id="electronGlow">
+                    <feGaussianBlur stdDeviation="1.5"/>
+                    <feMerge>
+                      <feMergeNode/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                <!-- Outer orbit ring (subtle) -->
+                <ellipse cx="130" cy="110" rx="90" ry="50" fill="none" stroke="rgba(0,255,255,0.08)" stroke-width="0.5" opacity="0.5"/>
+
+                <!-- ORBIT 1 - Amber (X-axis tilt) -->
+                <ellipse cx="130" cy="110" rx="75" ry="32" fill="none" stroke="url(#orbitGrad1)" stroke-width="1.8" opacity="0.7" filter="url(#atomGlow)" transform="rotate(-20 130 110)"/>
+                <!-- Orbit 1 Electrons -->
+                <g id="orbit1-electrons" filter="url(#electronGlow)">
+                  <circle cx="205" cy="110" r="4.5" fill="url(#orbitGrad1)" opacity="0.95"/>
+                  <circle cx="205" cy="110" r="2" fill="#ffffff" opacity="0.8"/>
+                </g>
+                <g id="orbit1-electrons-2" filter="url(#electronGlow)" opacity="0.6">
+                  <circle cx="55" cy="110" r="4.5" fill="url(#orbitGrad1)" opacity="0.7"/>
+                  <circle cx="55" cy="110" r="2" fill="#ffffff" opacity="0.6"/>
+                </g>
+
+                <!-- ORBIT 2 - Red (Y-axis tilt) -->
+                <ellipse cx="130" cy="110" rx="75" ry="32" fill="none" stroke="url(#orbitGrad2)" stroke-width="1.8" opacity="0.7" filter="url(#atomGlow)" transform="rotate(20 130 110)"/>
+                <!-- Orbit 2 Electrons -->
+                <g id="orbit2-electrons" filter="url(#electronGlow)">
+                  <circle cx="165" cy="60" r="4.5" fill="url(#orbitGrad2)" opacity="0.95"/>
+                  <circle cx="165" cy="60" r="2" fill="#ffffff" opacity="0.8"/>
+                </g>
+                <g id="orbit2-electrons-2" filter="url(#electronGlow)" opacity="0.6">
+                  <circle cx="95" cy="160" r="4.5" fill="url(#orbitGrad2)" opacity="0.7"/>
+                  <circle cx="95" cy="160" r="2" fill="#ffffff" opacity="0.6"/>
+                </g>
+
+                <!-- ORBIT 3 - Cyan (Z-axis) -->
+                <ellipse cx="130" cy="110" rx="75" ry="32" fill="none" stroke="url(#orbitGrad3)" stroke-width="1.8" opacity="0.7" filter="url(#atomGlow)"/>
+                <!-- Orbit 3 Electrons -->
+                <g id="orbit3-electrons" filter="url(#electronGlow)">
+                  <circle cx="205" cy="110" r="4.5" fill="url(#orbitGrad3)" opacity="0.95"/>
+                  <circle cx="205" cy="110" r="2" fill="#ffffff" opacity="0.8"/>
+                </g>
+                <g id="orbit3-electrons-2" filter="url(#electronGlow)" opacity="0.6">
+                  <circle cx="55" cy="110" r="4.5" fill="url(#orbitGrad3)" opacity="0.7"/>
+                  <circle cx="55" cy="110" r="2" fill="#ffffff" opacity="0.6"/>
+                </g>
+
+                <!-- NUCLEUS - Center core (pulsing effect via animation) -->
+                <g id="nucleus">
+                  <!-- Outer nucleus shell -->
+                  <circle cx="130" cy="110" r="14" fill="none" stroke="url(#nucleusGrad)" stroke-width="2" opacity="0.9" filter="url(#atomGlow)"/>
+                  <circle cx="130" cy="110" r="10" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" opacity="0.6"/>
+                  <!-- Core -->
+                  <circle cx="130" cy="110" r="6" fill="url(#nucleusGrad)" opacity="0.95" filter="url(#atomGlow)"/>
+                  <!-- Inner glow -->
+                  <circle cx="130" cy="110" r="3" fill="#ffffff" opacity="0.8"/>
+                </g>
+
+                <!-- Decorative tech label -->
+                <text x="130" y="185" font-family="monospace" font-size="10" fill="rgba(0,255,255,0.25)" text-anchor="middle" letter-spacing="2">NEXUS CORE</text>
+
+                <!-- Ambient energy pulses -->
+                <circle cx="130" cy="110" r="50" fill="none" stroke="rgba(0,255,255,0.06)" stroke-width="0.5" opacity="0.4"/>
+                <circle cx="130" cy="110" r="95" fill="none" stroke="rgba(255,42,42,0.05)" stroke-width="0.5" opacity="0.3"/>
+              </svg>
             </div>
           </div>
 
@@ -1803,7 +2226,7 @@
           <div class="holo-dot" data-idx="2"></div>
         </div>
 
-        <div class="holo-label" id="holoLabel">// TESSERACT MODEL //</div>
+        <div class="holo-label" id="holoLabel">// HEADPHONE-X //</div>
       </div>
     </section>
 
@@ -1910,6 +2333,31 @@
       </div>
     </section>
 
+    <!-- About Section -->
+    <section id="about" class="about-section fade-in">
+      <div class="about-content">
+        <h2 class="about-title">// ABOUT NEXUS //</h2>
+        <div class="about-grid">
+          <div class="about-item">
+            <h3>WHAT IS NEXUS?</h3>
+            <p>NEXUS Cyber Marketplace is a premium gaming ecosystem built for elite players who demand cutting-edge performance, immersive experiences, and innovative gameplay. We curate and deliver retro-cyberpunk masterpieces designed to push your limits.</p>
+          </div>
+          <div class="about-item">
+            <h3>OUR MISSION</h3>
+            <p>To revolutionize indie gaming by combining nostalgia with next-generation technology. We believe great games deserve a platform worthy of their ambition — where creativity meets performance.</p>
+          </div>
+          <div class="about-item">
+            <h3>WHY NEXUS?</h3>
+            <p>Handpicked titles. Direct artist support. Zero compromise on quality. Our marketplace exists to champion developers and reward players with experiences that matter.</p>
+          </div>
+          <div class="about-item">
+            <h3>CONNECT WITH US</h3>
+            <p>Questions about our platform or interested in partnerships? Tap into our neural uplink via the CONNECT button at the top, or reach out through our official channels.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="banner fade-in">
       <div class="banner-content">
         <h2>SYSTEM OVERRIDE INITIATED</h2>
@@ -1982,6 +2430,24 @@
   </div>
 
   <script>
+    // ===== MOBILE / TOUCH PERFORMANCE MODE =====
+    const mobileViewportQuery = window.matchMedia('(max-width: 768px)');
+    const touchInputQuery = window.matchMedia('(hover: none), (pointer: coarse)');
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function isLiteMode() {
+      return mobileViewportQuery.matches || touchInputQuery.matches || reducedMotionQuery.matches;
+    }
+
+    function syncLiteModeClass() {
+      document.body.classList.toggle('lite-mode', isLiteMode());
+    }
+
+    syncLiteModeClass();
+    [mobileViewportQuery, touchInputQuery, reducedMotionQuery].forEach((query) => {
+      query.addEventListener('change', syncLiteModeClass);
+    });
+
     // Intro Sequence
     const introOverlay = document.getElementById('introOverlay');
     const introStatus = document.getElementById('introStatus');
@@ -2043,14 +2509,16 @@
     // Start intro immediately
     runIntro();
 
-    // Custom Cursor Glow Effect
-    document.addEventListener('mousemove', (e) => {
-      const cursor = document.querySelector('.cursor-glow');
-      if (cursor) {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-      }
-    });
+    // Custom Cursor Glow Effect (desktop only)
+    if (!isLiteMode()) {
+      document.addEventListener('mousemove', (e) => {
+        const cursor = document.querySelector('.cursor-glow');
+        if (cursor) {
+          cursor.style.left = e.clientX + 'px';
+          cursor.style.top = e.clientY + 'px';
+        }
+      });
+    }
 
     // Intersection Observer for Fade-In animations
     const observerOptions = {
@@ -2076,30 +2544,26 @@
       });
     });
 
-    // ===== HOLOGRAM CAROUSEL + MOUSE TRACKING =====
-    const heroVisual   = document.getElementById('heroVisual');
+    // ===== HOLOGRAM CAROUSEL =====
     const glitchFlash  = document.getElementById('glitchFlash');
     const holoLabel    = document.getElementById('holoLabel');
     const dots         = document.querySelectorAll('.holo-dot');
 
-    // Default transforms & labels for each hologram
-    const HOLOS = [
-      { id: 'tesseract',  el: null, defaultRX: -20, defaultRY: 45,  rangeRX: 35, rangeRY: 45, label: '// TESSERACT MODEL //' },
-      { id: 'controller', el: null, defaultRX: -15, defaultRY: 25,  rangeRX: 25, rangeRY: 35, label: '// CONTROLLER-01 //' },
-      { id: 'vrHeadset',  el: null, defaultRX: -10, defaultRY: -30, rangeRX: 20, rangeRY: 30, label: '// VR UNIT-X //' },
+    const HOLO_LABELS = [
+      '// HEADPHONE-X //',
+      '// CONTROLLER-01 //',
+      '// VR UNIT-X //',
     ];
-    HOLOS.forEach(h => h.el = document.getElementById(h.id));
 
     let activeIdx = 0;
     let isGlitching = false;
 
     function setHologram(idx) {
-      // Hide all
       document.querySelectorAll('.holo-object').forEach((el, i) => {
         el.classList.toggle('active', i === idx);
       });
       dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-      holoLabel.textContent = HOLOS[idx].label;
+      holoLabel.textContent = HOLO_LABELS[idx];
       activeIdx = idx;
     }
 
@@ -2107,25 +2571,28 @@
       if (isGlitching) return;
       isGlitching = true;
 
-      // Phase 1: glitch flash in
-      glitchFlash.classList.remove('firing');
-      void glitchFlash.offsetWidth; // force reflow
-      glitchFlash.classList.add('firing');
+      const swapDelay = isLiteMode() ? 0 : 350;
+      const cleanupDelay = isLiteMode() ? 200 : 750;
 
-      // Phase 2: swap mid-glitch
-      setTimeout(() => setHologram(nextIdx), 350);
-
-      // Phase 3: clean up
-      setTimeout(() => {
+      if (!isLiteMode() && glitchFlash) {
         glitchFlash.classList.remove('firing');
+        void glitchFlash.offsetWidth;
+        glitchFlash.classList.add('firing');
+      }
+
+      setTimeout(() => setHologram(nextIdx), swapDelay);
+
+      setTimeout(() => {
+        if (glitchFlash) glitchFlash.classList.remove('firing');
         isGlitching = false;
-      }, 750);
+      }, cleanupDelay);
     }
 
-    // Auto-cycle every 10 seconds
+    // Auto-cycle every 10 seconds (slower on mobile to save battery)
+    const holoCycleMs = isLiteMode() ? 14000 : 10000;
     let cycleTimer = setInterval(() => {
-      triggerGlitchTransition((activeIdx + 1) % HOLOS.length);
-    }, 10000);
+      triggerGlitchTransition((activeIdx + 1) % HOLO_LABELS.length);
+    }, holoCycleMs);
 
     // Dot click manual control
     dots.forEach(dot => {
@@ -2135,101 +2602,42 @@
         clearInterval(cycleTimer);
         triggerGlitchTransition(idx);
         cycleTimer = setInterval(() => {
-          triggerGlitchTransition((activeIdx + 1) % HOLOS.length);
-        }, 10000);
+          triggerGlitchTransition((activeIdx + 1) % HOLO_LABELS.length);
+        }, holoCycleMs);
       });
     });
 
-    // Mouse tracking for the active hologram
-    let targetRX = 0, targetRY = 0;
-    let currentRX = 0, currentRY = 0;
-    let mouseInside = false;
-    let rafId;
+    // ===== BORDER GLOW PROXIMITY MOUSE TRACKING (desktop only) =====
+    if (!isLiteMode()) {
+      const maxProximityDistance = 350;
 
-    function lerp(a, b, t) { return a + (b - a) * t; }
+      document.addEventListener('mousemove', (e) => {
+        document.querySelectorAll('.app-card').forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const cardCenterX = rect.left + rect.width / 2;
+          const cardCenterY = rect.top + rect.height / 2;
 
-    function animateReturn() {
-      const h = HOLOS[activeIdx];
-      if (!h.el) return;
+          const distX = e.clientX - cardCenterX;
+          const distY = e.clientY - cardCenterY;
+          const distance = Math.sqrt(distX * distX + distY * distY);
 
-      const speed = mouseInside ? 0.15 : 0.04; // slow lerp on mouse-out
-      currentRX = lerp(currentRX, targetRX, speed);
-      currentRY = lerp(currentRY, targetRY, speed);
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
 
-      const dRX = Math.abs(currentRX - targetRX);
-      const dRY = Math.abs(currentRY - targetRY);
+          card.style.setProperty('--mouse-x', `${mouseX}px`);
+          card.style.setProperty('--mouse-y', `${mouseY}px`);
 
-      h.el.style.transform = `rotateX(${currentRX + h.defaultRX}deg) rotateY(${currentRY + h.defaultRY}deg)`;
-      h.el.style.transition = 'none'; // handled by JS lerp
-
-      if (dRX > 0.05 || dRY > 0.05 || mouseInside) {
-        rafId = requestAnimationFrame(animateReturn);
-      } else {
-        // Snap perfectly to default and stop
-        h.el.style.transform = `rotateX(${h.defaultRX}deg) rotateY(${h.defaultRY}deg)`;
-        currentRX = 0;
-        currentRY = 0;
-      }
-    }
-
-    if (heroVisual) {
-      heroVisual.addEventListener('mousemove', (e) => {
-        const h = HOLOS[activeIdx];
-        const rect = heroVisual.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        targetRY = ((x - cx) / cx) * h.rangeRY;
-        targetRX = -((y - cy) / cy) * h.rangeRX;
-        if (!mouseInside) {
-          mouseInside = true;
-          cancelAnimationFrame(rafId);
-          animateReturn();
-        }
-      });
-
-      heroVisual.addEventListener('mouseleave', () => {
-        mouseInside = false;
-        targetRX = 0;
-        targetRY = 0;
-        cancelAnimationFrame(rafId);
-        animateReturn();
+          if (distance < maxProximityDistance) {
+            const intensity = 1.0 - (distance / maxProximityDistance);
+            card.style.setProperty('--glow-opacity', intensity.toFixed(2));
+            card.style.setProperty('--shadow-intensity', (intensity * 0.4).toFixed(2));
+          } else {
+            card.style.setProperty('--glow-opacity', '0');
+            card.style.setProperty('--shadow-intensity', '0');
+          }
+        });
       });
     }
-
-    // ===== BORDER GLOW PROXIMITY MOUSE TRACKING =====
-    const maxProximityDistance = 350; // trigger zone radius in pixels
-
-    document.addEventListener('mousemove', (e) => {
-      document.querySelectorAll('.app-card').forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const cardCenterX = rect.left + rect.width / 2;
-        const cardCenterY = rect.top + rect.height / 2;
-        
-        // Calculate distance from mouse to card center
-        const distX = e.clientX - cardCenterX;
-        const distY = e.clientY - cardCenterY;
-        const distance = Math.sqrt(distX * distX + distY * distY);
-        
-        // Calculate mouse position relative to card (even if outside!)
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        
-        card.style.setProperty('--mouse-x', `${mouseX}px`);
-        card.style.setProperty('--mouse-y', `${mouseY}px`);
-        
-        if (distance < maxProximityDistance) {
-          // Calculate glow intensity based on distance (closer = stronger)
-          const intensity = 1.0 - (distance / maxProximityDistance);
-          card.style.setProperty('--glow-opacity', intensity.toFixed(2));
-          card.style.setProperty('--shadow-intensity', (intensity * 0.4).toFixed(2));
-        } else {
-          card.style.setProperty('--glow-opacity', '0');
-          card.style.setProperty('--shadow-intensity', '0');
-        }
-      });
-    });
 
     // ===== WHATSAPP ACQUIRE INTEGRATIONS =====
     const adminPhone = "6285219583336";
@@ -2590,8 +2998,10 @@
       initConnectModal();
     }
 
-    // ===== RETRO DITHERED WAVES WEBGL BACKGROUND =====
+    // ===== RETRO DITHERED WAVES WEBGL BACKGROUND (desktop only) =====
     (function() {
+      if (isLiteMode()) return;
+
       const canvas = document.getElementById('ditherCanvas');
       if (!canvas) return;
 
