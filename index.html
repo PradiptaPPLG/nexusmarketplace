@@ -761,9 +761,28 @@
     .app-meta {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
+      gap: 1rem;
       border-top: 1px solid var(--border-color);
       padding-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .app-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .detail-btn {
+      border-color: var(--neon-amber);
+      color: var(--neon-amber);
+    }
+
+    .detail-btn:hover {
+      background: var(--neon-amber-dim);
+      box-shadow: 0 0 15px var(--neon-amber-dim);
+      text-shadow: 0 0 5px var(--neon-amber);
     }
 
     .price {
@@ -1433,6 +1452,151 @@
       color: #fff;
     }
 
+    /* ===== GAME DETAIL MODAL ===== */
+    .game-detail-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(5, 5, 5, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 10001;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .game-detail-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .game-detail-modal {
+      width: 100%;
+      max-width: 720px;
+      max-height: 90vh;
+      clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+      padding: 2px;
+      background: linear-gradient(135deg, var(--neon-red), var(--neon-amber));
+      box-shadow: 0 24px 60px rgba(255, 42, 42, 0.3);
+      transform: scale(0.92) translateY(12px);
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .game-detail-overlay.active .game-detail-modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .game-detail-inner {
+      background: #050505;
+      clip-path: polygon(19px 0, 100% 0, 100% calc(100% - 19px), calc(100% - 19px) 100%, 0 100%, 0 19px);
+      max-height: calc(90vh - 4px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+    }
+
+    .game-detail-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      color: var(--neon-amber);
+      letter-spacing: 1px;
+    }
+
+    .game-detail-body {
+      padding: 1.5rem 2rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .game-detail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .game-meta-chip {
+      font-family: var(--font-heading);
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      padding: 4px 10px;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      background: rgba(255, 42, 42, 0.05);
+    }
+
+    .game-meta-chip strong {
+      color: var(--neon-red);
+      margin-right: 4px;
+    }
+
+    .game-detail-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .game-detail-section h4 {
+      font-size: 0.85rem;
+      color: var(--neon-red);
+      margin-bottom: 0.75rem;
+      letter-spacing: 2px;
+    }
+
+    .game-detail-section p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .game-detail-section ol {
+      color: var(--text-muted);
+      padding-left: 1.25rem;
+      line-height: 1.7;
+    }
+
+    .game-detail-section ol li {
+      margin-bottom: 0.5rem;
+    }
+
+    .game-detail-section ol ol {
+      margin-top: 0.5rem;
+      list-style-type: lower-alpha;
+    }
+
+    .game-detail-section ol ol li {
+      margin-bottom: 0.35rem;
+    }
+
+    .game-detail-subtitle {
+      font-family: var(--font-heading);
+      font-size: 0.75rem;
+      color: var(--neon-amber);
+      margin: 1rem 0 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .game-detail-footer {
+      padding: 1rem 2rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
     /* ===== RETRO DITHERED WAVES BACKGROUND ===== */
     #ditherCanvas {
       position: absolute;
@@ -1646,81 +1810,96 @@
 
       <div class="app-grid">
         <!-- App Card 1 -->
-        <div class="app-card fade-in">
+        <div class="app-card fade-in" data-game-id="perfect-timer">
           <div class="card-border"></div>
           <div class="card-content">
             <img src="assets/perfecttimer.png"
               style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
               alt="Perfect Timer">
             <h3 class="app-title">PERFECT TIMER</h3>
-            <p class="app-desc">Stop the timer exactly at the target. Test your reflexes and precision.</p>
+            <p class="app-desc">Uji refleks dan ketepatan waktu — hentikan stopwatch sedekat mungkin dengan target detik.</p>
             <div class="app-meta">
               <span class="price">Rp 50.000</span>
-              <button class="buy-btn">ACQUIRE</button>
+              <div class="app-actions">
+                <button type="button" class="detail-btn cyber-button-sm">DETAIL</button>
+                <button type="button" class="buy-btn">ACQUIRE</button>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- App Card 2 -->
-        <div class="app-card fade-in delay-1">
+        <div class="app-card fade-in delay-1" data-game-id="just-half-it">
           <div class="card-border"></div>
           <div class="card-content">
             <img src="assets/thumbnailjusthalfit.png"
               style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
               alt="Just Half It">
             <h3 class="app-title">JUST HALF IT</h3>
-            <p class="app-desc">Can you slice it perfectly in half? A game of spatial awareness.</p>
+            <p class="app-desc">Duel ketangkasan visual — potong objek tepat pada persentase target yang ditentukan.</p>
             <div class="app-meta">
               <span class="price">Rp 75.000</span>
-              <button class="buy-btn">ACQUIRE</button>
+              <div class="app-actions">
+                <button type="button" class="detail-btn cyber-button-sm">DETAIL</button>
+                <button type="button" class="buy-btn">ACQUIRE</button>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- App Card 3 -->
-        <div class="app-card fade-in delay-2">
+        <div class="app-card fade-in delay-2" data-game-id="guess-rush">
           <div class="card-border"></div>
           <div class="card-content">
             <img src="assets/thumbnailsambungkata.png"
               style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
-              alt="Sambung Kata">
-            <h3 class="app-title">SAMBUNG KATA</h3>
-            <p class="app-desc">A fast-paced word chaining game. Think fast, type faster.</p>
+              alt="Guess Rush">
+            <h3 class="app-title">GUESS RUSH</h3>
+            <p class="app-desc">Menu utama & tebak kata retro-cyberpunk — termasuk Sambung Kata (P1 vs P2) dan leaderboard global.</p>
             <div class="app-meta">
               <span class="price">Rp 85.000</span>
-              <button class="buy-btn">ACQUIRE</button>
+              <div class="app-actions">
+                <button type="button" class="detail-btn cyber-button-sm">DETAIL</button>
+                <button type="button" class="buy-btn">ACQUIRE</button>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- App Card 4 -->
-        <div class="app-card fade-in">
+        <div class="app-card fade-in" data-game-id="sambung-kata">
           <div class="card-border"></div>
           <div class="card-content">
             <img src="assets/thumbnailsequencerush.png"
               style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
-              alt="Sequence Rush">
-            <h3 class="app-title">SEQUENCE RUSH</h3>
-            <p class="app-desc">Memorize and repeat the pattern before the time runs out.</p>
+              alt="Sambung Kata">
+            <h3 class="app-title">SAMBUNG KATA</h3>
+            <p class="app-desc">Game sambung kata cepat untuk 2 pemain lokal — mode Casual atau Chaos dengan combo api dinamis.</p>
             <div class="app-meta">
               <span class="price">Rp 90.000</span>
-              <button class="buy-btn">ACQUIRE</button>
+              <div class="app-actions">
+                <button type="button" class="detail-btn cyber-button-sm">DETAIL</button>
+                <button type="button" class="buy-btn">ACQUIRE</button>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- App Card 5 -->
-        <div class="app-card fade-in delay-1">
+        <div class="app-card fade-in delay-1" data-game-id="kaching-kaboom">
           <div class="card-border"></div>
           <div class="card-content">
             <img src="assets/thumnailkachingataukaboom.png"
               style="width: 100%; height: 160px; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid var(--border-color);"
               alt="Kaching or Kaboom">
             <h3 class="app-title">KACHING OR KABOOM</h3>
-            <p class="app-desc">Press your luck. Defuse the bomb or walk away with the cash.</p>
+            <p class="app-desc">Taktik grid 5×5 ranjau darat — tempatkan bom, cari koin, hindari ledakan lawan (P1 vs P2).</p>
             <div class="app-meta">
               <span class="price">Rp 99.000</span>
-              <button class="buy-btn">ACQUIRE</button>
+              <div class="app-actions">
+                <button type="button" class="detail-btn cyber-button-sm">DETAIL</button>
+                <button type="button" class="buy-btn">ACQUIRE</button>
+              </div>
             </div>
           </div>
         </div>
