@@ -1277,12 +1277,14 @@
       align-items: center;
       opacity: 0;
       visibility: hidden;
+      pointer-events: none;
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
     .connect-modal-overlay.active {
       opacity: 1;
       visibility: visible;
+      pointer-events: auto;
     }
 
     .connect-modal {
@@ -1468,12 +1470,14 @@
       padding: 1.5rem;
       opacity: 0;
       visibility: hidden;
+      pointer-events: none;
       transition: opacity 0.35s ease, visibility 0.35s ease;
     }
 
     .game-detail-overlay.active {
       opacity: 1;
       visibility: visible;
+      pointer-events: auto;
     }
 
     .game-detail-modal {
@@ -1926,6 +1930,23 @@
     </div>
   </footer>
 
+  <!-- Game Detail Modal -->
+  <div class="game-detail-overlay" id="gameDetailOverlay" aria-hidden="true">
+    <div class="game-detail-modal" role="dialog" aria-modal="true" aria-labelledby="gameDetailTitle">
+      <div class="game-detail-inner">
+        <div class="game-detail-header">
+          <span class="game-detail-title" id="gameDetailTitle">// APP DETAIL //</span>
+          <button type="button" class="modal-close-btn" id="closeGameDetail" aria-label="Close">&times;</button>
+        </div>
+        <div class="game-detail-body" id="gameDetailBody"></div>
+        <div class="game-detail-footer">
+          <button type="button" class="cyber-button-sm disconnect" id="gameDetailCloseBtn">CLOSE</button>
+          <button type="button" class="cyber-button-sm chat" id="gameDetailAcquireBtn">ACQUIRE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Neural Link Connect Modal (before scripts so getElementById always works) -->
   <div class="connect-modal-overlay" id="connectModal">
     <div class="connect-modal">
@@ -2151,29 +2172,31 @@
       }
     }
 
-    heroVisual.addEventListener('mousemove', (e) => {
-      const h = HOLOS[activeIdx];
-      const rect = heroVisual.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const cx = rect.width / 2;
-      const cy = rect.height / 2;
-      targetRY = ((x - cx) / cx) * h.rangeRY;
-      targetRX = -((y - cy) / cy) * h.rangeRX;
-      if (!mouseInside) {
-        mouseInside = true;
+    if (heroVisual) {
+      heroVisual.addEventListener('mousemove', (e) => {
+        const h = HOLOS[activeIdx];
+        const rect = heroVisual.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        targetRY = ((x - cx) / cx) * h.rangeRY;
+        targetRX = -((y - cy) / cy) * h.rangeRX;
+        if (!mouseInside) {
+          mouseInside = true;
+          cancelAnimationFrame(rafId);
+          animateReturn();
+        }
+      });
+
+      heroVisual.addEventListener('mouseleave', () => {
+        mouseInside = false;
+        targetRX = 0;
+        targetRY = 0;
         cancelAnimationFrame(rafId);
         animateReturn();
-      }
-    });
-
-    heroVisual.addEventListener('mouseleave', () => {
-      mouseInside = false;
-      targetRX = 0;
-      targetRY = 0;
-      cancelAnimationFrame(rafId);
-      animateReturn();
-    });
+      });
+    }
 
     // ===== BORDER GLOW PROXIMITY MOUSE TRACKING =====
     const maxProximityDistance = 350; // trigger zone radius in pixels
@@ -2210,6 +2233,206 @@
 
     // ===== WHATSAPP ACQUIRE INTEGRATIONS =====
     const adminPhone = "6285219583336";
+
+    const GAME_CATALOG = {
+      'perfect-timer': {
+        title: 'PERFECT TIMER',
+        price: 'Rp 50.000',
+        genre: 'Refleks & Timing',
+        players: '1 Pemain',
+        platform: 'Web Browser',
+        summary: 'Uji refleks dan ketepatan waktu — hentikan stopwatch sedekat mungkin dengan target detik yang ditentukan.',
+        features: [
+          'Mode target waktu acak setiap ronde',
+          'Skor berdasarkan selisih milidetik dari target',
+          'Leaderboard sesi lokal',
+          'Antarmuka retro-cyberpunk responsif'
+        ],
+        howToPlay: [
+          'Baca target detik yang muncul di layar.',
+          'Tekan START untuk memulai stopwatch.',
+          'Tekan STOP sedekat mungkin dengan target — semakin kecil selisihnya, semakin tinggi skor.'
+        ]
+      },
+      'just-half-it': {
+        title: 'JUST HALF IT',
+        price: 'Rp 75.000',
+        genre: 'Visual & Presisi',
+        players: '1–2 Pemain',
+        platform: 'Web Browser',
+        summary: 'Duel ketangkasan visual — potong objek tepat pada persentase target yang ditentukan.',
+        features: [
+          'Berbagai bentuk objek dengan tingkat kesulitan berbeda',
+          'Mode solo dan versus lokal',
+          'Feedback visual real-time saat memotong',
+          'Sistem skor berdasarkan akurasi persentase'
+        ],
+        howToPlay: [
+          'Lihat persentase target (misalnya 50%).',
+          'Geser garis potong hingga menurutmu tepat di titik tersebut.',
+          'Konfirmasi potongan — pemenang ditentukan dari selisih terkecil.'
+        ]
+      },
+      'guess-rush': {
+        title: 'GUESS RUSH',
+        price: 'Rp 85.000',
+        genre: 'Trivia & Kata',
+        players: '1–2 Pemain',
+        platform: 'Web Browser',
+        summary: 'Menu utama & tebak kata retro-cyberpunk — termasuk Sambung Kata (P1 vs P2) dan leaderboard global.',
+        features: [
+          'Hub game dengan beberapa mode mini-game',
+          'Mode tebak kata cepat dengan timer',
+          'Integrasi Sambung Kata untuk duel 2 pemain',
+          'Leaderboard global untuk kompetisi antar pemain'
+        ],
+        howToPlay: [
+          'Pilih mode dari menu utama Guess Rush.',
+          'Ikuti petunjuk di layar — tebak kata atau jawab prompt sebelum waktu habis.',
+          'Kumpulkan poin; mode PvP menentukan pemenang dari skor tertinggi.'
+        ]
+      },
+      'sambung-kata': {
+        title: 'SAMBUNG KATA',
+        price: 'Rp 90.000',
+        genre: 'Word Chain',
+        players: '2 Pemain (Lokal)',
+        platform: 'Web Browser',
+        summary: 'Game sambung kata cepat untuk 2 pemain lokal — mode Casual atau Chaos dengan combo api dinamis.',
+        features: [
+          'Mode Casual (waktu normal) dan Chaos (timer agresif)',
+          'Sistem combo api saat jawaban benar beruntun',
+          'Kamus kata Indonesia built-in',
+          'Antarmuka split-screen untuk 2 pemain'
+        ],
+        howToPlay: [
+          'Pemain 1 mulai dengan kata valid.',
+          'Pemain 2 harus menyambung: huruf terakhir kata lawan = huruf pertama jawabanmu.',
+          'Kata tidak boleh diulang; pemain yang kehabisan waktu atau gagal kalah.'
+        ]
+      },
+      'kaching-kaboom': {
+        title: 'KACHING OR KABOOM',
+        price: 'Rp 99.000',
+        genre: 'Strategi Grid',
+        players: '2 Pemain (Lokal)',
+        platform: 'Web Browser',
+        summary: 'Taktik grid 5×5 ranjau darat — tempatkan bom, cari koin, hindari ledakan lawan.',
+        features: [
+          'Grid 5×5 dengan fog-of-war',
+          'Tempatkan bom untuk jebak lawan',
+          'Kumpulkan koin tersembunyi untuk menang',
+          'Mode P1 vs P2 bergantian giliran'
+        ],
+        howToPlay: [
+          'Giliran bergantian: pilih sel untuk dibuka atau tempatkan bom.',
+          'Koin memberi poin; bom lawan mengeliminasi pemain yang menginjaknya.',
+          'Menang dengan poin koin tertinggi atau eliminasi lawan.'
+        ]
+      }
+    };
+
+    let activeGameId = null;
+
+    function renderGameDetail(gameId) {
+      const game = GAME_CATALOG[gameId];
+      if (!game) return;
+
+      const titleEl = document.getElementById('gameDetailTitle');
+      const bodyEl = document.getElementById('gameDetailBody');
+      if (!titleEl || !bodyEl) return;
+
+      titleEl.textContent = `// ${game.title} //`;
+
+      const featuresHtml = game.features.map(f => `<li>${f}</li>`).join('');
+      const stepsHtml = game.howToPlay.map(s => `<li>${s}</li>`).join('');
+
+      bodyEl.innerHTML = `
+        <div class="game-detail-meta">
+          <span class="game-meta-chip"><strong>PRICE</strong> ${game.price}</span>
+          <span class="game-meta-chip"><strong>GENRE</strong> ${game.genre}</span>
+          <span class="game-meta-chip"><strong>PLAYERS</strong> ${game.players}</span>
+          <span class="game-meta-chip"><strong>PLATFORM</strong> ${game.platform}</span>
+        </div>
+        <div class="game-detail-section">
+          <h4>// OVERVIEW //</h4>
+          <p>${game.summary}</p>
+        </div>
+        <div class="game-detail-section">
+          <h4>// FEATURES //</h4>
+          <ol>${featuresHtml}</ol>
+        </div>
+        <div class="game-detail-section">
+          <h4>// HOW TO PLAY //</h4>
+          <ol>${stepsHtml}</ol>
+        </div>
+      `;
+    }
+
+    function openGameDetail(gameId) {
+      const overlay = document.getElementById('gameDetailOverlay');
+      if (!overlay || !GAME_CATALOG[gameId]) return;
+
+      activeGameId = gameId;
+      renderGameDetail(gameId);
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeGameDetail() {
+      const overlay = document.getElementById('gameDetailOverlay');
+      if (!overlay) return;
+
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = 'auto';
+      activeGameId = null;
+    }
+
+    function initGameDetailModal() {
+      const overlay = document.getElementById('gameDetailOverlay');
+      const closeBtn = document.getElementById('closeGameDetail');
+      const closeFooterBtn = document.getElementById('gameDetailCloseBtn');
+      const acquireBtn = document.getElementById('gameDetailAcquireBtn');
+
+      if (!overlay) return;
+
+      document.querySelectorAll('.detail-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const card = btn.closest('.app-card');
+          const gameId = card && card.dataset.gameId;
+          if (gameId) openGameDetail(gameId);
+        });
+      });
+
+      if (closeBtn) closeBtn.addEventListener('click', closeGameDetail);
+      if (closeFooterBtn) closeFooterBtn.addEventListener('click', closeGameDetail);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeGameDetail();
+      });
+
+      if (acquireBtn) {
+        acquireBtn.addEventListener('click', () => {
+          if (!activeGameId) return;
+          const game = GAME_CATALOG[activeGameId];
+          const message = `Hello NEXUS, I'd like to acquire the application: *${game.title}* (${game.price}). Please guide me through the setup.`;
+          const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+          window.open(waUrl, '_blank');
+        });
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) {
+          closeGameDetail();
+        }
+      });
+    }
+
+    initGameDetailModal();
 
     // Handle ACQUIRE button clicks
     document.querySelectorAll('.app-card').forEach(card => {
@@ -2355,6 +2578,10 @@
           window.open(waUrl, '_blank');
         });
       }
+
+      connectModal.addEventListener('click', (e) => {
+        if (e.target === connectModal) closeConnectModalWindow();
+      });
     }
 
     if (document.readyState === 'loading') {
