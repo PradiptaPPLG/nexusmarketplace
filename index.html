@@ -827,6 +827,8 @@
       color: var(--neon-amber);
       text-align: center;
       letter-spacing: 2px;
+      white-space: nowrap;
+      overflow-wrap: normal;
     }
 
     .about-grid {
@@ -862,6 +864,48 @@
       color: var(--text-muted);
       line-height: 1.8;
       font-size: 0.95rem;
+    }
+
+    .about-item-metrics {
+      display: flex !important;
+      gap: 3rem;
+      align-items: center;
+      grid-column: 1 / -1;
+    }
+
+    .metrics-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .metric-item {
+      padding: 1rem;
+      background: rgba(255, 157, 0, 0.05);
+      border: 1px solid rgba(255, 157, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .metric-num {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--neon-amber);
+      margin-bottom: 0.3rem;
+    }
+
+    .metric-txt {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .metric-line {
+      width: 100%;
+      height: 40px;
+      display: block;
     }
 
     /* Banner */
@@ -1361,6 +1405,12 @@
       max-height: 120px;
       overflow-y: auto;
       line-height: 1.5;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .terminal-log::-webkit-scrollbar {
+      display: none;
     }
 
     .terminal-log p {
@@ -1526,6 +1576,12 @@
       padding: 1.5rem 2rem 2rem;
       overflow-y: auto;
       flex: 1;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .game-detail-body::-webkit-scrollbar {
+      display: none;
     }
 
     .game-detail-meta {
@@ -1706,6 +1762,43 @@
 
       .apps-section {
         padding: 3rem 5%;
+      }
+
+      .about-section {
+        padding: 2rem 5%;
+      }
+
+      .about-title {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        white-space: nowrap;
+        overflow-wrap: normal;
+      }
+
+      .about-grid {
+        gap: 1.5rem;
+      }
+
+      .about-item {
+        padding: 1.25rem;
+      }
+
+      .about-item-metrics {
+        flex-direction: column !important;
+      }
+
+      .metrics-panel {
+        display: none;
+      }
+
+      .about-item h3 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .about-item p {
+        font-size: 0.85rem;
+        line-height: 1.6;
       }
 
       .section-title {
@@ -2350,9 +2443,16 @@
             <h3>WHY NEXUS?</h3>
             <p>Handpicked titles. Direct artist support. Zero compromise on quality. Our marketplace exists to champion developers and reward players with experiences that matter.</p>
           </div>
-          <div class="about-item">
-            <h3>CONNECT WITH US</h3>
-            <p>Questions about our platform or interested in partnerships? Tap into our neural uplink via the CONNECT button at the top, or reach out through our official channels.</p>
+          <div class="about-item about-item-metrics">
+            <div style="flex: 1;">
+              <h3>CONNECT WITH US</h3>
+              <p>Questions about our platform or interested in partnerships? Tap into our neural uplink via the CONNECT button at the top, or reach out through our official channels.</p>
+            </div>
+            <div class="metrics-panel">
+              <div class="metric-item" data-metric="0"><div class="metric-num">2.5M+</div><div class="metric-txt">Players</div><canvas class="metric-line"></canvas></div>
+              <div class="metric-item" data-metric="1"><div class="metric-num">500+</div><div class="metric-txt">Games</div><canvas class="metric-line"></canvas></div>
+              <div class="metric-item" data-metric="2"><div class="metric-num">$48K+</div><div class="metric-txt">Revenue</div><canvas class="metric-line"></canvas></div>
+            </div>
           </div>
         </div>
       </div>
@@ -3218,6 +3318,60 @@
 
       requestAnimationFrame(render);
     })();
+
+    // METRICS DASHBOARD - Safe initialization after page load
+    setTimeout(() => {
+      try {
+        const metricData = [
+          { base: 2500000, min: 2e6, max: 3e6 },
+          { base: 500, min: 450, max: 550 },
+          { base: 48000, min: 40000, max: 60000 }
+        ];
+
+        document.querySelectorAll('.metric-item').forEach((item, idx) => {
+          const canvas = item.querySelector('.metric-line');
+          if (!canvas) return;
+          const data = metricData[idx];
+          if (!data) return;
+
+          canvas.width = canvas.offsetWidth * 2;
+          canvas.height = 80;
+          const ctx = canvas.getContext('2d');
+          let values = Array(40).fill(data.base);
+
+          function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const min = Math.min(...values);
+            const max = Math.max(...values);
+            const range = max - min || 1;
+
+            ctx.strokeStyle = 'rgba(255,157,0,0.6)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            values.forEach((v, i) => {
+              const x = (i / (values.length - 1)) * canvas.width;
+              const y = canvas.height - ((v - min) / range) * canvas.height * 0.8;
+              if (i === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+          }
+
+          draw();
+          setInterval(() => {
+            const last = values[values.length - 1];
+            const change = (Math.random() - 0.5) * (data.max - data.min) * 0.12;
+            let newVal = last + change;
+            newVal = Math.max(data.min, Math.min(data.max, newVal));
+            values.push(newVal);
+            if (values.length > 40) values.shift();
+            draw();
+          }, 2000);
+        });
+      } catch (e) {
+        console.log('Metrics init:', e.message);
+      }
+    }, 100);
   </script>
 </body>
 
