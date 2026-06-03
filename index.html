@@ -1809,6 +1809,23 @@
     // Start intro immediately
     runIntro();
 
+    // Provide a safe global showConnectModal to prevent external scripts or cached handlers
+    // from calling a function that references DOM nodes before they exist.
+    window.showConnectModal = function() {
+      const connectModal = document.getElementById('connectModal');
+      if (!connectModal) {
+        // If DOM not ready, wait for it and then open
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
+            const m = document.getElementById('connectModal');
+            if (m) m.classList.add('active');
+          }, { once: true });
+        }
+        return;
+      }
+      connectModal.classList.add('active');
+    };
+
     // Custom Cursor Glow Effect
     document.addEventListener('mousemove', (e) => {
       const cursor = document.querySelector('.cursor-glow');
