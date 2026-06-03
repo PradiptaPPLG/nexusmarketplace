@@ -1747,6 +1747,40 @@
     </div>
   </footer>
 
+  <!-- Neural Link Connect Modal (before scripts so getElementById always works) -->
+  <div class="connect-modal-overlay" id="connectModal">
+    <div class="connect-modal">
+      <div class="connect-modal-inner">
+        <div class="modal-header">
+          <span class="modal-title">// NEURAL UPLINK PORT //</span>
+          <button class="modal-close-btn" id="closeConnectModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="terminal-container">
+            <div class="terminal-log" id="terminalLog">
+              <!-- Dynamic terminal lines go here -->
+            </div>
+            <div class="terminal-progress-container">
+              <div class="terminal-progress-bar" id="terminalProgressBar"></div>
+            </div>
+          </div>
+          <div class="connect-success-details" id="connectSuccessDetails" style="display: none;">
+            <div class="status-badge success">UPLINK ACTIVE</div>
+            <div class="success-info">
+              <p><strong>SECURITY PROXY:</strong> SECURE DECK BYPASS</p>
+              <p><strong>TARGET PROTOCOL:</strong> WA_LINK_ADMIN_6285219583336</p>
+              <p>Your cyberdeck terminal is now connected to the NEXUS core subnet.</p>
+            </div>
+            <div class="modal-actions">
+              <button class="cyber-button-sm disconnect" id="disconnectBtn">DISCONNECT</button>
+              <button class="cyber-button-sm chat" id="chatAdminBtn">CHAT WITH ADMIN</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Intro Sequence
     const introOverlay = document.getElementById('introOverlay');
@@ -1808,23 +1842,6 @@
 
     // Start intro immediately
     runIntro();
-
-    // Provide a safe global showConnectModal to prevent external scripts or cached handlers
-    // from calling a function that references DOM nodes before they exist.
-    window.showConnectModal = function() {
-      const connectModal = document.getElementById('connectModal');
-      if (!connectModal) {
-        // If DOM not ready, wait for it and then open
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', () => {
-            const m = document.getElementById('connectModal');
-            if (m) m.classList.add('active');
-          }, { once: true });
-        }
-        return;
-      }
-      connectModal.classList.add('active');
-    };
 
     // Custom Cursor Glow Effect
     document.addEventListener('mousemove', (e) => {
@@ -2043,110 +2060,115 @@
     }
 
     // ===== NEURAL UPLINK CONNECT SIMULATION =====
-    // Ensure DOM elements exist before wiring up the connect modal and handlers
-    document.addEventListener('DOMContentLoaded', () => {
+    let connectProgressInterval;
+
+    const connectionLogs = [
+      "PINGING SUBNET PROXY [109.88.22.44]...",
+      "DECK SECURITY PROTOCOLS BYPASSED.",
+      "INJECTING NEXUS TERMINAL PAYLOAD...",
+      "DECRYPTING ENCRYPTION SYMBOLS...",
+      "AUTHENTICATING HOST PROTOCOLS...",
+      "UPLINK ROUTE STABILIZED.",
+      "HANDSHAKE COMPLETE. SECURE CONNECTION ACTIVE."
+    ];
+
+    function showConnectModal() {
+      const connectModal = document.getElementById('connectModal');
+      if (!connectModal) return;
+
+      const terminalLog = document.getElementById('terminalLog');
+      const terminalProgressBar = document.getElementById('terminalProgressBar');
+      const terminalContainer = connectModal.querySelector('.terminal-container');
+      const connectSuccessDetails = document.getElementById('connectSuccessDetails');
+      const navbarConnectBtn = document.getElementById('connectBtn');
+
+      connectModal.classList.add('active');
+      if (terminalLog) terminalLog.innerHTML = "";
+      if (terminalProgressBar) terminalProgressBar.style.width = "0%";
+      if (terminalContainer) terminalContainer.style.display = "flex";
+      if (connectSuccessDetails) connectSuccessDetails.style.display = "none";
+
+      let logIndex = 0;
+      let currentProgress = 0;
+
+      function printNextLog() {
+        if (!connectModal.classList.contains('active')) return;
+        if (logIndex < connectionLogs.length) {
+          const logLine = document.createElement('p');
+          logLine.textContent = `> ${connectionLogs[logIndex]}`;
+          if (terminalLog) {
+            terminalLog.appendChild(logLine);
+            terminalLog.scrollTop = terminalLog.scrollHeight;
+          }
+          logIndex++;
+          setTimeout(printNextLog, 300 + Math.random() * 300);
+        }
+      }
+
+      printNextLog();
+
+      clearInterval(connectProgressInterval);
+      connectProgressInterval = setInterval(() => {
+        currentProgress += Math.random() * 6 + 3;
+        if (currentProgress >= 100) {
+          currentProgress = 100;
+          clearInterval(connectProgressInterval);
+
+          setTimeout(() => {
+            if (!connectModal.classList.contains('active')) return;
+            if (terminalContainer) terminalContainer.style.display = "none";
+            if (connectSuccessDetails) connectSuccessDetails.style.display = "block";
+
+            if (navbarConnectBtn) {
+              navbarConnectBtn.textContent = "CONNECTED";
+              navbarConnectBtn.style.borderColor = "#39ff14";
+              navbarConnectBtn.style.color = "#39ff14";
+              navbarConnectBtn.style.textShadow = "0 0 8px rgba(57, 255, 20, 0.6)";
+            }
+          }, 400);
+        }
+        if (terminalProgressBar) terminalProgressBar.style.width = `${currentProgress}%`;
+      }, 100);
+    }
+
+    function closeConnectModalWindow() {
+      const connectModal = document.getElementById('connectModal');
+      if (!connectModal) return;
+      connectModal.classList.remove('active');
+      clearInterval(connectProgressInterval);
+    }
+
+    function handleDisconnect() {
+      closeConnectModalWindow();
+      const navbarConnectBtn = document.getElementById('connectBtn');
+      if (navbarConnectBtn) {
+        navbarConnectBtn.textContent = "CONNECT";
+        navbarConnectBtn.style.borderColor = "var(--neon-red)";
+        navbarConnectBtn.style.color = "var(--text-main)";
+        navbarConnectBtn.style.textShadow = "none";
+      }
+    }
+
+    function initConnectModal() {
       const navbarConnectBtn = document.getElementById('connectBtn');
       const connectModal = document.getElementById('connectModal');
+      if (!navbarConnectBtn || !connectModal) return;
+      if (navbarConnectBtn.dataset.connectWired === 'true') return;
+      navbarConnectBtn.dataset.connectWired = 'true';
+
+      window.showConnectModal = showConnectModal;
+      navbarConnectBtn.addEventListener('click', showConnectModal);
+
       const closeConnectModal = document.getElementById('closeConnectModal');
       const disconnectBtn = document.getElementById('disconnectBtn');
       const chatAdminBtn = document.getElementById('chatAdminBtn');
-      const terminalLog = document.getElementById('terminalLog');
-      const terminalProgressBar = document.getElementById('terminalProgressBar');
-      const terminalContainer = document.querySelector('.terminal-container');
-      const connectSuccessDetails = document.getElementById('connectSuccessDetails');
-
-      let progressInterval;
-
-      const connectionLogs = [
-        "PINGING SUBNET PROXY [109.88.22.44]...",
-        "DECK SECURITY PROTOCOLS BYPASSED.",
-        "INJECTING NEXUS TERMINAL PAYLOAD...",
-        "DECRYPTING ENCRYPTION SYMBOLS...",
-        "AUTHENTICATING HOST PROTOCOLS...",
-        "UPLINK ROUTE STABILIZED.",
-        "HANDSHAKE COMPLETE. SECURE CONNECTION ACTIVE."
-      ];
-
-      function showConnectModal() {
-        if (!connectModal) return;
-        connectModal.classList.add('active');
-        if (terminalLog) terminalLog.innerHTML = "";
-        if (terminalProgressBar) terminalProgressBar.style.width = "0%";
-        if (terminalContainer) terminalContainer.style.display = "flex";
-        if (connectSuccessDetails) connectSuccessDetails.style.display = "none";
-        
-        let logIndex = 0;
-        let currentProgress = 0;
-        
-        function printNextLog() {
-          if (!connectModal.classList.contains('active')) return;
-          if (logIndex < connectionLogs.length) {
-            const logLine = document.createElement('p');
-            logLine.textContent = `> ${connectionLogs[logIndex]}`;
-            if (terminalLog) {
-              terminalLog.appendChild(logLine);
-              terminalLog.scrollTop = terminalLog.scrollHeight;
-            }
-            logIndex++;
-            
-            setTimeout(printNextLog, 300 + Math.random() * 300);
-          }
-        }
-
-        printNextLog();
-
-        progressInterval = setInterval(() => {
-          currentProgress += Math.random() * 6 + 3;
-          if (currentProgress >= 100) {
-            currentProgress = 100;
-            clearInterval(progressInterval);
-            
-            setTimeout(() => {
-              if (!connectModal.classList.contains('active')) return;
-              if (terminalContainer) terminalContainer.style.display = "none";
-              if (connectSuccessDetails) connectSuccessDetails.style.display = "block";
-              
-              // Visual change to nav button
-              if (navbarConnectBtn) {
-                navbarConnectBtn.textContent = "CONNECTED";
-                navbarConnectBtn.style.borderColor = "#39ff14";
-                navbarConnectBtn.style.color = "#39ff14";
-                navbarConnectBtn.style.textShadow = "0 0 8px rgba(57, 255, 20, 0.6)";
-              }
-            }, 400);
-          }
-          if (terminalProgressBar) terminalProgressBar.style.width = `${currentProgress}%`;
-        }, 100);
-      }
-
-      function closeConnectModalWindow() {
-        if (!connectModal) return;
-        connectModal.classList.remove('active');
-        clearInterval(progressInterval);
-      }
-
-      function handleDisconnect() {
-        closeConnectModalWindow();
-        if (navbarConnectBtn) {
-          navbarConnectBtn.textContent = "CONNECT";
-          navbarConnectBtn.style.borderColor = "var(--neon-red)";
-          navbarConnectBtn.style.color = "var(--text-main)";
-          navbarConnectBtn.style.textShadow = "none";
-        }
-      }
-
-      if (navbarConnectBtn) {
-        navbarConnectBtn.addEventListener('click', showConnectModal);
-      }
 
       if (closeConnectModal) {
         closeConnectModal.addEventListener('click', closeConnectModalWindow);
       }
-
       if (disconnectBtn) {
         disconnectBtn.addEventListener('click', handleDisconnect);
       }
-
       if (chatAdminBtn) {
         chatAdminBtn.addEventListener('click', () => {
           const message = "Hello NEXUS Admin, I have successfully connected my cyberdeck to the marketplace subnet and would like to inquire about system services.";
@@ -2154,7 +2176,13 @@
           window.open(waUrl, '_blank');
         });
       }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initConnectModal, { once: true });
+    } else {
+      initConnectModal();
+    }
 
     // ===== RETRO DITHERED WAVES WEBGL BACKGROUND =====
     (function() {
@@ -2375,40 +2403,6 @@
       requestAnimationFrame(render);
     })();
   </script>
-
-  <!-- Neural Link Connect Modal -->
-  <div class="connect-modal-overlay" id="connectModal">
-    <div class="connect-modal">
-      <div class="connect-modal-inner">
-        <div class="modal-header">
-          <span class="modal-title">// NEURAL UPLINK PORT //</span>
-          <button class="modal-close-btn" id="closeConnectModal">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div class="terminal-container">
-            <div class="terminal-log" id="terminalLog">
-              <!-- Dynamic terminal lines go here -->
-            </div>
-            <div class="terminal-progress-container">
-              <div class="terminal-progress-bar" id="terminalProgressBar"></div>
-            </div>
-          </div>
-          <div class="connect-success-details" id="connectSuccessDetails" style="display: none;">
-            <div class="status-badge success">UPLINK ACTIVE</div>
-            <div class="success-info">
-              <p><strong>SECURITY PROXY:</strong> SECURE DECK BYPASS</p>
-              <p><strong>TARGET PROTOCOL:</strong> WA_LINK_ADMIN_6285219583336</p>
-              <p>Your cyberdeck terminal is now connected to the NEXUS core subnet.</p>
-            </div>
-            <div class="modal-actions">
-              <button class="cyber-button-sm disconnect" id="disconnectBtn">DISCONNECT</button>
-              <button class="cyber-button-sm chat" id="chatAdminBtn">CHAT WITH ADMIN</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </body>
 
 </html>
