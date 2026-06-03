@@ -373,7 +373,7 @@
     /* ===== HOLOGRAM 2: PS CONTROLLER ===== */
     .holo-controller {
       width: 280px;
-      height: 220px;
+      height: 180px;
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(-15deg) rotateY(25deg);
@@ -381,50 +381,141 @@
       animation: ctrl-idle-float 6s ease-in-out infinite;
     }
     @keyframes ctrl-idle-float {
-      0%, 100% { animation-timing-function: ease-in-out; }
-      0%   { transform: rotateX(-15deg) rotateY(25deg) translateY(0px); }
-      50%  { transform: rotateX(-15deg) rotateY(25deg) translateY(-12px); }
+      0%, 100% { transform: rotateX(-15deg) rotateY(25deg) translateY(0px); }
+      50%  { transform: rotateX(-15deg) rotateY(25deg) translateY(-10px); }
     }
-    /* Controller body faces */
     .ctrl-face {
       position: absolute;
-      border: 1.5px solid var(--neon-red);
-      background: rgba(255,42,42,0.06);
-      box-shadow: inset 0 0 12px var(--neon-red-dim), 0 0 8px var(--neon-red-dim);
+      width: 280px;
+      height: 180px;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      transform-style: preserve-3d;
     }
-    /* Main body: 240x90x30 */
-    .ctrl-front  { width:240px; height:90px; top:60px; left:20px; transform: translateZ(15px); }
-    .ctrl-back   { width:240px; height:90px; top:60px; left:20px; transform: rotateY(180deg) translateZ(15px) translateX(-240px); border-color: rgba(255,42,42,0.3); }
-    .ctrl-top-body    { width:240px; height:30px; top:60px; left:20px; transform: rotateX(90deg) translateZ(30px) translateY(-30px) translateZ(-15px); border-color: var(--neon-amber); background: rgba(255,157,0,0.05); }
-    .ctrl-bottom-body { width:240px; height:30px; top:60px; left:20px; transform: rotateX(-90deg) translateZ(90px) translateZ(-15px); border-color: rgba(255,42,42,0.2); }
-    .ctrl-side-r { width:30px; height:90px; top:60px; left:230px; transform: rotateY(90deg) translateZ(15px); border-color: var(--neon-amber); background: rgba(255,157,0,0.05); }
-    .ctrl-side-l { width:30px; height:90px; top:60px; left:20px; transform: rotateY(-90deg) translateZ(15px); border-color: var(--neon-amber); background: rgba(255,157,0,0.05); }
-    /* Left grip */
-    .ctrl-grip-l { width:70px; height:100px; top:110px; left:20px; transform: translateZ(15px) rotateZ(-10deg); border-color:var(--neon-amber); background:rgba(255,157,0,0.05); }
-    .ctrl-grip-l-side { width:30px; height:100px; top:110px; left:20px; transform: rotateZ(-10deg) rotateY(-90deg) translateZ(15px); border-color:var(--neon-amber); background:rgba(255,157,0,0.04); }
-    /* Right grip */
-    .ctrl-grip-r { width:70px; height:100px; top:110px; left:190px; transform: translateZ(15px) rotateZ(10deg); border-color:var(--neon-amber); background:rgba(255,157,0,0.05); }
-    .ctrl-grip-r-side { width:30px; height:100px; top:110px; left:240px; transform: rotateZ(10deg) rotateY(90deg) translateZ(15px); border-color:var(--neon-amber); background:rgba(255,157,0,0.04); }
-    /* D-pad */
-    .ctrl-dpad-h { position:absolute; width:40px; height:14px; top:72px; left:50px; transform: translateZ(16px); border: 1.5px solid var(--neon-red); background:rgba(255,42,42,0.2); box-shadow: 0 0 8px var(--neon-red); }
-    .ctrl-dpad-v { position:absolute; width:14px; height:40px; top:58px; left:63px; transform: translateZ(16px); border: 1.5px solid var(--neon-red); background:rgba(255,42,42,0.2); box-shadow: 0 0 8px var(--neon-red); }
-    /* Buttons (X O △ □) */
-    .ctrl-btn { position:absolute; width:14px; height:14px; border-radius:50%; border:1.5px solid; transform: translateZ(16px); box-shadow: 0 0 10px; }
-    .ctrl-btn-x { top:98px; left:168px; border-color:#4fc3f7; box-shadow: 0 0 10px #4fc3f7; background:rgba(79,195,247,0.2); }
-    .ctrl-btn-o { top:84px; left:183px; border-color:var(--neon-red); box-shadow: 0 0 10px var(--neon-red); background:rgba(255,42,42,0.2); }
-    .ctrl-btn-t { top:70px; left:168px; border-color:#a5d6a7; box-shadow: 0 0 10px #a5d6a7; background:rgba(165,214,167,0.2); border-radius: 0; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
-    .ctrl-btn-s { top:84px; left:153px; border-color:#ce93d8; box-shadow: 0 0 10px #ce93d8; background:rgba(206,147,216,0.2); border-radius: 0; }
+    .ctrl-svg {
+      width: 100%;
+      height: 100%;
+    }
+    .ctrl-front {
+      transform: translateZ(12px);
+    }
+    .ctrl-back {
+      transform: rotateY(180deg) translateZ(12px);
+    }
+
+    /* 3D Side connecting bands */
+    .ctrl-side-band {
+      position: absolute;
+      border: 1px solid rgba(255, 42, 42, 0.3);
+      background: rgba(255, 42, 42, 0.02);
+    }
+    .ctrl-band-left {
+      width: 24px; height: 100px;
+      top: 50px; left: -2px;
+      transform: rotateY(90deg) translateZ(-6px) rotateX(15deg);
+    }
+    .ctrl-band-right {
+      width: 24px; height: 100px;
+      top: 50px; left: 258px;
+      transform: rotateY(90deg) translateZ(6px) rotateX(-15deg);
+    }
+    .ctrl-band-top {
+      width: 180px; height: 24px;
+      top: -12px; left: 50px;
+      transform: rotateX(90deg) translateZ(52px);
+    }
+
+    /* Controls styling */
+    .ctrl-dpad {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      top: 68px;
+      left: 48px;
+      transform: translateZ(18px);
+      transform-style: preserve-3d;
+    }
+    .ctrl-dpad-h, .ctrl-dpad-v {
+      position: absolute;
+      background: rgba(255, 42, 42, 0.2);
+      border: 1.5px solid var(--neon-red);
+      box-shadow: 0 0 8px var(--neon-red);
+    }
+    .ctrl-dpad-h {
+      width: 44px; height: 14px;
+      top: 15px; left: 0;
+    }
+    .ctrl-dpad-v {
+      width: 14px; height: 44px;
+      top: 0; left: 15px;
+    }
+
+    .ctrl-buttons-group {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      top: 65px;
+      left: 182px;
+      transform: translateZ(18px);
+      transform-style: preserve-3d;
+    }
+    .ctrl-btn {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 8px;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: 0 0 8px;
+    }
+    .ctrl-btn span {
+      transform: scale(0.8);
+    }
+    .ctrl-btn-x { top: 32px; left: 18px; border-color: #4fc3f7; box-shadow: 0 0 8px #4fc3f7; background: rgba(79,195,247,0.15); }
+    .ctrl-btn-o { top: 18px; left: 32px; border-color: var(--neon-red); box-shadow: 0 0 8px var(--neon-red); background: rgba(255,42,42,0.15); }
+    .ctrl-btn-t { top: 4px; left: 18px; border-color: #a5d6a7; box-shadow: 0 0 8px #a5d6a7; background: rgba(165,214,167,0.15); border-radius: 3px; }
+    .ctrl-btn-s { top: 18px; left: 4px; border-color: #ce93d8; box-shadow: 0 0 8px #ce93d8; background: rgba(206,147,216,0.15); border-radius: 2px; }
+
     /* Analog sticks */
-    .ctrl-stick { position:absolute; width:22px; height:22px; border-radius:50%; border:2px solid var(--neon-amber); box-shadow: 0 0 12px var(--neon-amber), inset 0 0 8px var(--neon-amber-dim); background:rgba(255,157,0,0.1); transform: translateZ(18px); }
-    .ctrl-stick-l { top:80px; left:88px; }
-    .ctrl-stick-r { top:80px; left:148px; }
-    /* Touchpad */
-    .ctrl-touchpad { position:absolute; width:48px; height:30px; top:72px; left:116px; border-radius:4px; border:1.5px solid #555; background:rgba(255,255,255,0.03); transform: translateZ(16px); box-shadow: 0 0 5px rgba(255,255,255,0.1); }
+    .ctrl-stick-container {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      transform-style: preserve-3d;
+    }
+    .ctrl-stick-left-wrapper { top: 105px; left: 86px; }
+    .ctrl-stick-right-wrapper { top: 105px; left: 156px; }
+
+    .ctrl-stick-base {
+      position: absolute;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 157, 0, 0.4);
+      background: rgba(255, 157, 0, 0.05);
+      transform: translateZ(12px);
+    }
+    .ctrl-stick {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      top: 4px; left: 4px;
+      border-radius: 50%;
+      border: 2px solid var(--neon-amber);
+      box-shadow: 0 0 10px var(--neon-amber), inset 0 0 6px var(--neon-amber-dim);
+      background: rgba(255,157,0,0.15);
+      transform: translateZ(20px);
+    }
 
     /* ===== HOLOGRAM 3: VR HEADSET ===== */
     .holo-vr {
-      width: 280px;
-      height: 200px;
+      width: 240px;
+      height: 130px;
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(-10deg) rotateY(-30deg);
@@ -433,40 +524,95 @@
     }
     @keyframes vr-idle-float {
       0%, 100% { transform: rotateX(-10deg) rotateY(-30deg) translateY(0); }
-      50%       { transform: rotateX(-10deg) rotateY(-30deg) translateY(-14px); }
+      50%       { transform: rotateX(-10deg) rotateY(-30deg) translateY(-10px); }
     }
-    .vr-face {
+    .vr-face-plate {
       position: absolute;
-      border: 1.5px solid var(--neon-red);
-      background: rgba(255,42,42,0.05);
-      box-shadow: inset 0 0 15px var(--neon-red-dim), 0 0 10px var(--neon-red-dim);
+      width: 240px;
+      height: 130px;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      transform-style: preserve-3d;
     }
-    /* Main visor box: 260x130x100 depth 60 */
-    .vr-front  { width:220px; height:130px; top:20px; left:30px; transform: translateZ(40px); border-color: var(--neon-amber); background:rgba(255,157,0,0.06); box-shadow: inset 0 0 20px var(--neon-amber-dim), 0 0 15px var(--neon-amber-dim); }
-    .vr-back   { width:220px; height:130px; top:20px; left:30px; transform: rotateY(180deg) translateZ(40px) translateX(-220px); }
-    .vr-top    { width:220px; height:80px;  top:20px; left:30px; transform: rotateX(90deg) translateZ(80px) translateY(-40px) translateZ(-40px); border-color: var(--neon-amber); background:rgba(255,157,0,0.04); }
-    .vr-bottom { width:220px; height:80px;  top:150px; left:30px; transform: rotateX(-90deg) translateZ(40px) translateZ(-40px); }
-    .vr-right  { width:80px;  height:130px; top:20px; left:210px; transform: rotateY(90deg) translateZ(40px); border-color: var(--neon-amber); background:rgba(255,157,0,0.04); }
-    .vr-left   { width:80px;  height:130px; top:20px; left:30px;  transform: rotateY(-90deg) translateZ(40px); border-color: var(--neon-amber); background:rgba(255,157,0,0.04); }
-    /* Lenses on front face */
-    .vr-lens { position:absolute; border-radius:50%; border:2px solid var(--neon-red); transform: translateZ(42px); animation: lens-pulse 2s ease-in-out infinite alternate; }
-    .vr-lens-l { width:64px; height:64px; top:53px; left:58px;  background: radial-gradient(circle, rgba(255,42,42,0.3) 0%, rgba(0,0,0,0) 70%); box-shadow: 0 0 20px var(--neon-red), inset 0 0 20px var(--neon-red-dim); }
-    .vr-lens-r { width:64px; height:64px; top:53px; left:158px; background: radial-gradient(circle, rgba(255,42,42,0.3) 0%, rgba(0,0,0,0) 70%); box-shadow: 0 0 20px var(--neon-red), inset 0 0 20px var(--neon-red-dim); }
-    .vr-lens-bridge { position:absolute; width:34px; height:10px; top:80px; left:123px; transform: translateZ(42px); border: 1.5px solid var(--neon-amber); background:rgba(255,157,0,0.1); }
-    /* Strap left */
-    .vr-strap-l { position:absolute; width:50px; height:16px; top:77px; left:-12px; transform: translateZ(20px) rotateY(15deg); border:1.5px solid #333; background:rgba(255,255,255,0.03); }
-    /* Strap right */
-    .vr-strap-r { position:absolute; width:50px; height:16px; top:77px; left:242px; transform: translateZ(20px) rotateY(-15deg); border:1.5px solid #333; background:rgba(255,255,255,0.03); }
-    @keyframes lens-pulse {
-      from { box-shadow: 0 0 15px var(--neon-red), inset 0 0 15px var(--neon-red-dim); }
-      to   { box-shadow: 0 0 35px var(--neon-red), inset 0 0 35px var(--neon-red); }
+    .vr-svg {
+      width: 100%;
+      height: 100%;
     }
-    /* Scan line effect on front face */
-    .vr-scanline { position:absolute; width:220px; height:2px; top:20px; left:30px; transform: translateZ(43px); background: linear-gradient(90deg, transparent, var(--neon-amber), transparent); animation: vr-scan 2.5s linear infinite; opacity:0.7; }
+    .vr-front {
+      transform: translateZ(40px);
+    }
+    .vr-back {
+      transform: rotateY(180deg) translateZ(40px);
+    }
+
+    /* Connecting depth bands for visor */
+    .vr-depth-band {
+      position: absolute;
+      border: 1px solid rgba(255, 157, 0, 0.3);
+      background: rgba(255, 157, 0, 0.01);
+    }
+    .vr-db-top {
+      width: 160px; height: 80px;
+      top: -40px; left: 40px;
+      transform: rotateX(90deg);
+    }
+    .vr-db-bottom {
+      width: 160px; height: 80px;
+      top: 90px; left: 40px;
+      transform: rotateX(90deg);
+    }
+    .vr-db-left {
+      width: 80px; height: 100px;
+      top: 15px; left: -30px;
+      transform: rotateY(90deg);
+    }
+    .vr-db-right {
+      width: 80px; height: 100px;
+      top: 15px; left: 190px;
+      transform: rotateY(90deg);
+    }
+
+    /* VR Head strap wraps around */
+    .vr-strap {
+      position: absolute;
+      height: 20px;
+      transform-style: preserve-3d;
+    }
+    .vr-strap-left {
+      width: 120px;
+      top: 55px; left: -75px;
+      transform: rotateY(-90deg) translateZ(45px) rotateX(5deg);
+    }
+    .vr-strap-right {
+      width: 120px;
+      top: 55px; left: 195px;
+      transform: rotateY(90deg) translateZ(45px) rotateX(-5deg);
+    }
+    .vr-strap-back {
+      width: 160px;
+      height: 30px;
+      top: 50px; left: 40px;
+      transform: translateZ(-80px);
+    }
+
+    /* VR front visor scan line */
+    .vr-scanline {
+      position: absolute;
+      width: 210px;
+      height: 2px;
+      top: 15px;
+      left: 15px;
+      transform: translateZ(2px);
+      background: linear-gradient(90deg, transparent, var(--neon-red), transparent);
+      animation: vr-scan 3s linear infinite;
+      opacity: 0.8;
+    }
     @keyframes vr-scan {
-      0%   { top: 22px; opacity: 0.7; }
-      90%  { opacity: 0.7; }
-      100% { top: 148px; opacity: 0; }
+      0%   { top: 20px; opacity: 0; }
+      10%  { opacity: 0.8; }
+      90%  { opacity: 0.8; }
+      100% { top: 110px; opacity: 0; }
     }
 
     /* ===== ORBIT RING (shared decoration) ===== */
@@ -532,12 +678,15 @@
 
     .app-card {
       position: relative;
-      padding: 1.5px; /* Border thickness */
+      padding: 2px; /* Thicker border for better visibility */
       background: var(--border-color); /* Fallback border color */
       clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
       transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.3s ease;
       overflow: hidden;
       display: flex;
+      /* Dynamic drop-shadow that glows based on proximity variables */
+      filter: drop-shadow(0 8px 16px rgba(255, 42, 42, var(--shadow-intensity, 0))) 
+              drop-shadow(0 0 12px rgba(255, 157, 0, var(--shadow-intensity, 0)));
     }
 
     /* Glow track */
@@ -545,20 +694,25 @@
       content: '';
       position: absolute;
       top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(circle 130px at var(--mouse-x, -9999px) var(--mouse-y, -9999px), var(--neon-red) 0%, var(--neon-amber) 55%, transparent 100%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
+      background: radial-gradient(circle 160px at var(--mouse-x, -9999px) var(--mouse-y, -9999px), 
+                                  #ff0077 0%, 
+                                  var(--neon-red) 35%, 
+                                  var(--neon-amber) 70%, 
+                                  transparent 100%);
+      opacity: var(--glow-opacity, 0);
+      transition: opacity 0.2s ease;
       z-index: 1;
       pointer-events: none;
     }
 
     .app-card:hover {
-      transform: translateY(-6px);
-      filter: drop-shadow(0 12px 24px rgba(255, 42, 42, 0.25)) drop-shadow(0 0 8px rgba(255, 157, 0, 0.15));
+      transform: translateY(-8px) scale(1.02);
+      filter: drop-shadow(0 14px 28px rgba(255, 42, 42, 0.35)) 
+              drop-shadow(0 0 15px rgba(255, 157, 0, 0.25));
     }
 
     .app-card:hover::before {
-      opacity: 1;
+      opacity: 1 !important;
     }
 
     .card-content {
@@ -1063,6 +1217,33 @@
         margin-top: 3rem;
         transform: scale(0.7);
       }
+
+      .navbar {
+        padding: 1rem 3%;
+      }
+
+      .logo {
+        font-size: 1.1rem;
+        gap: 6px;
+      }
+
+      .badge {
+        font-size: 0.6rem;
+        padding: 1px 4px;
+      }
+
+      .nav-links {
+        gap: 0.8rem;
+      }
+
+      .nav-links a {
+        font-size: 0.75rem;
+      }
+
+      .cyber-button-sm {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+      }
     }
 
     /* ===== NEURAL LINK CONNECT MODAL ===== */
@@ -1344,43 +1525,104 @@
           <!-- HOLO 2: PS Controller -->
           <div class="holo-object" id="holo-1">
             <div class="holo-controller" id="controller">
-              <div class="ctrl-face ctrl-front"></div>
-              <div class="ctrl-face ctrl-back"></div>
-              <div class="ctrl-face ctrl-top-body"></div>
-              <div class="ctrl-face ctrl-bottom-body"></div>
-              <div class="ctrl-face ctrl-side-r"></div>
-              <div class="ctrl-face ctrl-side-l"></div>
-              <div class="ctrl-face ctrl-grip-l"></div>
-              <div class="ctrl-face ctrl-grip-l-side"></div>
-              <div class="ctrl-face ctrl-grip-r"></div>
-              <div class="ctrl-face ctrl-grip-r-side"></div>
-              <div class="ctrl-dpad-h"></div>
-              <div class="ctrl-dpad-v"></div>
-              <div class="ctrl-btn ctrl-btn-x"></div>
-              <div class="ctrl-btn ctrl-btn-o"></div>
-              <div class="ctrl-btn ctrl-btn-t"></div>
-              <div class="ctrl-btn ctrl-btn-s"></div>
-              <div class="ctrl-stick ctrl-stick-l"></div>
-              <div class="ctrl-stick ctrl-stick-r"></div>
-              <div class="ctrl-touchpad"></div>
+              <!-- Front Faceplate (Curved SVG) -->
+              <div class="ctrl-face ctrl-front">
+                <svg viewBox="0 0 280 180" class="ctrl-svg">
+                  <path d="M 50,40 Q 140,25 230,40 Q 275,50 265,110 Q 250,170 215,160 Q 185,150 140,160 Q 95,150 65,160 Q 30,170 15,110 Q 5,50 50,40 Z" fill="rgba(255, 42, 42, 0.04)" stroke="var(--neon-red)" stroke-width="2" />
+                  <!-- Touchpad outline in SVG -->
+                  <path d="M 100,42 L 180,42 A 8,8 0 0,1 188,50 L 184,80 A 4,4 0 0,1 180,84 L 100,84 A 4,4 0 0,1 96,80 L 92,50 A 8,8 0 0,1 100,42 Z" fill="none" stroke="rgba(255, 42, 42, 0.4)" stroke-width="1.5" />
+                  <!-- Detail lines on grips -->
+                  <path d="M 28,100 C 24,120 32,140 45,150" fill="none" stroke="rgba(255, 42, 42, 0.3)" stroke-width="1" />
+                  <path d="M 252,100 C 256,120 248,140 235,150" fill="none" stroke="rgba(255, 42, 42, 0.3)" stroke-width="1" />
+                </svg>
+              </div>
+
+              <!-- Back Faceplate (Curved SVG) -->
+              <div class="ctrl-face ctrl-back">
+                <svg viewBox="0 0 280 180" class="ctrl-svg">
+                  <path d="M 50,40 Q 140,25 230,40 Q 275,50 265,110 Q 250,170 215,160 Q 185,150 140,160 Q 95,150 65,160 Q 30,170 15,110 Q 5,50 50,40 Z" fill="rgba(255, 42, 42, 0.02)" stroke="rgba(255, 42, 42, 0.4)" stroke-width="1.5" />
+                </svg>
+              </div>
+
+              <!-- 3D Connecting Side Bands for Grips -->
+              <div class="ctrl-side-band ctrl-band-left"></div>
+              <div class="ctrl-side-band ctrl-band-right"></div>
+              <div class="ctrl-side-band ctrl-band-top"></div>
+
+              <!-- Floating 3D D-Pad -->
+              <div class="ctrl-dpad">
+                <div class="ctrl-dpad-h"></div>
+                <div class="ctrl-dpad-v"></div>
+              </div>
+
+              <!-- Floating Action Buttons (X, O, Triangle, Square) -->
+              <div class="ctrl-buttons-group">
+                <div class="ctrl-btn ctrl-btn-x"><span>&times;</span></div>
+                <div class="ctrl-btn ctrl-btn-o"><span>&#9675;</span></div>
+                <div class="ctrl-btn ctrl-btn-t"><span>&#9651;</span></div>
+                <div class="ctrl-btn ctrl-btn-s"><span>&#9633;</span></div>
+              </div>
+
+              <!-- Floating 3D Analog Sticks -->
+              <div class="ctrl-stick-container ctrl-stick-left-wrapper">
+                <div class="ctrl-stick-base"></div>
+                <div class="ctrl-stick ctrl-stick-l"></div>
+              </div>
+              <div class="ctrl-stick-container ctrl-stick-right-wrapper">
+                <div class="ctrl-stick-base"></div>
+                <div class="ctrl-stick ctrl-stick-r"></div>
+              </div>
             </div>
           </div>
 
           <!-- HOLO 3: VR Headset -->
           <div class="holo-object" id="holo-2">
             <div class="holo-vr" id="vrHeadset">
-              <div class="vr-face vr-front"></div>
-              <div class="vr-face vr-back"></div>
-              <div class="vr-face vr-top"></div>
-              <div class="vr-face vr-bottom"></div>
-              <div class="vr-face vr-right"></div>
-              <div class="vr-face vr-left"></div>
-              <div class="vr-lens vr-lens-l"></div>
-              <div class="vr-lens vr-lens-r"></div>
-              <div class="vr-lens-bridge"></div>
-              <div class="vr-strap-l"></div>
-              <div class="vr-strap-r"></div>
-              <div class="vr-scanline"></div>
+              <!-- Front Visor Plate (Contoured SVG) -->
+              <div class="vr-face-plate vr-front">
+                <svg viewBox="0 0 240 130" class="vr-svg">
+                  <path d="M 40,15 L 200,15 Q 230,15 230,45 L 230,85 Q 230,115 200,115 L 155,115 Q 145,115 135,100 Q 120,80 105,100 Q 95,115 85,115 L 40,115 Q 10,115 10,85 L 10,45 Q 10,15 40,15 Z" fill="rgba(255, 157, 0, 0.04)" stroke="var(--neon-amber)" stroke-width="2" />
+                  <circle cx="70" cy="65" r="30" fill="none" stroke="rgba(255, 42, 42, 0.4)" stroke-width="1.5" />
+                  <circle cx="70" cy="65" r="5" fill="var(--neon-red)" />
+                  <circle cx="170" cy="65" r="30" fill="none" stroke="rgba(255, 42, 42, 0.4)" stroke-width="1.5" />
+                  <circle cx="170" cy="65" r="5" fill="var(--neon-red)" />
+                  <path d="M 25,65 L 215,65" stroke="var(--neon-amber)" stroke-width="1.5" stroke-dasharray="6,4" />
+                </svg>
+                <div class="vr-scanline"></div>
+              </div>
+
+              <!-- Back Visor Plate -->
+              <div class="vr-face-plate vr-back">
+                <svg viewBox="0 0 240 130" class="vr-svg">
+                  <path d="M 40,15 L 200,15 Q 230,15 230,45 L 230,85 Q 230,115 200,115 L 155,115 Q 145,115 135,100 Q 120,80 105,100 Q 95,115 85,115 L 40,115 Q 10,115 10,85 L 10,45 Q 10,15 40,15 Z" fill="none" stroke="rgba(255, 157, 0, 0.2)" stroke-width="1" />
+                </svg>
+              </div>
+
+              <!-- Connecting Visor Depth Bands -->
+              <div class="vr-depth-band vr-db-top"></div>
+              <div class="vr-depth-band vr-db-bottom"></div>
+              <div class="vr-depth-band vr-db-left"></div>
+              <div class="vr-depth-band vr-db-right"></div>
+
+              <!-- 3D Strap System -->
+              <div class="vr-strap vr-strap-left">
+                <svg viewBox="0 0 100 20" style="width: 100%; height: 100%;">
+                  <path d="M 0,10 L 100,10" stroke="rgba(255,157,0,0.5)" stroke-width="2.5" stroke-dasharray="5,3" />
+                  <path d="M 20,5 L 20,15 M 50,5 L 50,15 M 80,5 L 80,15" stroke="rgba(255,157,0,0.4)" stroke-width="1.5" />
+                </svg>
+              </div>
+              <div class="vr-strap vr-strap-right">
+                <svg viewBox="0 0 100 20" style="width: 100%; height: 100%;">
+                  <path d="M 0,10 L 100,10" stroke="rgba(255,157,0,0.5)" stroke-width="2.5" stroke-dasharray="5,3" />
+                  <path d="M 20,5 L 20,15 M 50,5 L 50,15 M 80,5 L 80,15" stroke="rgba(255,157,0,0.4)" stroke-width="1.5" />
+                </svg>
+              </div>
+              <div class="vr-strap vr-strap-back">
+                <svg viewBox="0 0 160 30" style="width: 100%; height: 100%;">
+                  <rect x="10" y="5" width="140" height="20" rx="5" fill="none" stroke="rgba(255,157,0,0.6)" stroke-width="2" />
+                  <path d="M 40,15 L 120,15" stroke="var(--neon-red)" stroke-width="1.5" />
+                </svg>
+              </div>
             </div>
           </div>
 
@@ -1720,14 +1962,36 @@
       animateReturn();
     });
 
-    // ===== BORDER GLOW DYNAMIC MOUSE TRACKING =====
-    document.querySelectorAll('.app-card').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
+    // ===== BORDER GLOW PROXIMITY MOUSE TRACKING =====
+    const maxProximityDistance = 350; // trigger zone radius in pixels
+
+    document.addEventListener('mousemove', (e) => {
+      document.querySelectorAll('.app-card').forEach(card => {
         const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
+        const cardCenterX = rect.left + rect.width / 2;
+        const cardCenterY = rect.top + rect.height / 2;
+        
+        // Calculate distance from mouse to card center
+        const distX = e.clientX - cardCenterX;
+        const distY = e.clientY - cardCenterY;
+        const distance = Math.sqrt(distX * distX + distY * distY);
+        
+        // Calculate mouse position relative to card (even if outside!)
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        card.style.setProperty('--mouse-x', `${mouseX}px`);
+        card.style.setProperty('--mouse-y', `${mouseY}px`);
+        
+        if (distance < maxProximityDistance) {
+          // Calculate glow intensity based on distance (closer = stronger)
+          const intensity = 1.0 - (distance / maxProximityDistance);
+          card.style.setProperty('--glow-opacity', intensity.toFixed(2));
+          card.style.setProperty('--shadow-intensity', (intensity * 0.4).toFixed(2));
+        } else {
+          card.style.setProperty('--glow-opacity', '0');
+          card.style.setProperty('--shadow-intensity', '0');
+        }
       });
     });
 
@@ -1762,107 +2026,118 @@
     }
 
     // ===== NEURAL UPLINK CONNECT SIMULATION =====
-    const navbarConnectBtn = document.getElementById('connectBtn');
-    const connectModal = document.getElementById('connectModal');
-    const closeConnectModal = document.getElementById('closeConnectModal');
-    const disconnectBtn = document.getElementById('disconnectBtn');
-    const chatAdminBtn = document.getElementById('chatAdminBtn');
-    const terminalLog = document.getElementById('terminalLog');
-    const terminalProgressBar = document.getElementById('terminalProgressBar');
-    const terminalContainer = document.querySelector('.terminal-container');
-    const connectSuccessDetails = document.getElementById('connectSuccessDetails');
+    // Ensure DOM elements exist before wiring up the connect modal and handlers
+    document.addEventListener('DOMContentLoaded', () => {
+      const navbarConnectBtn = document.getElementById('connectBtn');
+      const connectModal = document.getElementById('connectModal');
+      const closeConnectModal = document.getElementById('closeConnectModal');
+      const disconnectBtn = document.getElementById('disconnectBtn');
+      const chatAdminBtn = document.getElementById('chatAdminBtn');
+      const terminalLog = document.getElementById('terminalLog');
+      const terminalProgressBar = document.getElementById('terminalProgressBar');
+      const terminalContainer = document.querySelector('.terminal-container');
+      const connectSuccessDetails = document.getElementById('connectSuccessDetails');
 
-    let progressInterval;
+      let progressInterval;
 
-    const connectionLogs = [
-      "PINGING SUBNET PROXY [109.88.22.44]...",
-      "DECK SECURITY PROTOCOLS BYPASSED.",
-      "INJECTING NEXUS TERMINAL PAYLOAD...",
-      "DECRYPTING ENCRYPTION SYMBOLS...",
-      "AUTHENTICATING HOST PROTOCOLS...",
-      "UPLINK ROUTE STABILIZED.",
-      "HANDSHAKE COMPLETE. SECURE CONNECTION ACTIVE."
-    ];
+      const connectionLogs = [
+        "PINGING SUBNET PROXY [109.88.22.44]...",
+        "DECK SECURITY PROTOCOLS BYPASSED.",
+        "INJECTING NEXUS TERMINAL PAYLOAD...",
+        "DECRYPTING ENCRYPTION SYMBOLS...",
+        "AUTHENTICATING HOST PROTOCOLS...",
+        "UPLINK ROUTE STABILIZED.",
+        "HANDSHAKE COMPLETE. SECURE CONNECTION ACTIVE."
+      ];
 
-    function showConnectModal() {
-      connectModal.classList.add('active');
-      terminalLog.innerHTML = "";
-      terminalProgressBar.style.width = "0%";
-      terminalContainer.style.display = "flex";
-      connectSuccessDetails.style.display = "none";
-      
-      let logIndex = 0;
-      let currentProgress = 0;
-      
-      function printNextLog() {
-        if (!connectModal.classList.contains('active')) return;
-        if (logIndex < connectionLogs.length) {
-          const logLine = document.createElement('p');
-          logLine.textContent = `> ${connectionLogs[logIndex]}`;
-          terminalLog.appendChild(logLine);
-          terminalLog.scrollTop = terminalLog.scrollHeight;
-          logIndex++;
-          
-          setTimeout(printNextLog, 300 + Math.random() * 300);
+      function showConnectModal() {
+        if (!connectModal) return;
+        connectModal.classList.add('active');
+        if (terminalLog) terminalLog.innerHTML = "";
+        if (terminalProgressBar) terminalProgressBar.style.width = "0%";
+        if (terminalContainer) terminalContainer.style.display = "flex";
+        if (connectSuccessDetails) connectSuccessDetails.style.display = "none";
+        
+        let logIndex = 0;
+        let currentProgress = 0;
+        
+        function printNextLog() {
+          if (!connectModal.classList.contains('active')) return;
+          if (logIndex < connectionLogs.length) {
+            const logLine = document.createElement('p');
+            logLine.textContent = `> ${connectionLogs[logIndex]}`;
+            if (terminalLog) {
+              terminalLog.appendChild(logLine);
+              terminalLog.scrollTop = terminalLog.scrollHeight;
+            }
+            logIndex++;
+            
+            setTimeout(printNextLog, 300 + Math.random() * 300);
+          }
+        }
+
+        printNextLog();
+
+        progressInterval = setInterval(() => {
+          currentProgress += Math.random() * 6 + 3;
+          if (currentProgress >= 100) {
+            currentProgress = 100;
+            clearInterval(progressInterval);
+            
+            setTimeout(() => {
+              if (!connectModal.classList.contains('active')) return;
+              if (terminalContainer) terminalContainer.style.display = "none";
+              if (connectSuccessDetails) connectSuccessDetails.style.display = "block";
+              
+              // Visual change to nav button
+              if (navbarConnectBtn) {
+                navbarConnectBtn.textContent = "CONNECTED";
+                navbarConnectBtn.style.borderColor = "#39ff14";
+                navbarConnectBtn.style.color = "#39ff14";
+                navbarConnectBtn.style.textShadow = "0 0 8px rgba(57, 255, 20, 0.6)";
+              }
+            }, 400);
+          }
+          if (terminalProgressBar) terminalProgressBar.style.width = `${currentProgress}%`;
+        }, 100);
+      }
+
+      function closeConnectModalWindow() {
+        if (!connectModal) return;
+        connectModal.classList.remove('active');
+        clearInterval(progressInterval);
+      }
+
+      function handleDisconnect() {
+        closeConnectModalWindow();
+        if (navbarConnectBtn) {
+          navbarConnectBtn.textContent = "CONNECT";
+          navbarConnectBtn.style.borderColor = "var(--neon-red)";
+          navbarConnectBtn.style.color = "var(--text-main)";
+          navbarConnectBtn.style.textShadow = "none";
         }
       }
 
-      printNextLog();
+      if (navbarConnectBtn) {
+        navbarConnectBtn.addEventListener('click', showConnectModal);
+      }
 
-      progressInterval = setInterval(() => {
-        currentProgress += Math.random() * 6 + 3;
-        if (currentProgress >= 100) {
-          currentProgress = 100;
-          clearInterval(progressInterval);
-          
-          setTimeout(() => {
-            if (!connectModal.classList.contains('active')) return;
-            terminalContainer.style.display = "none";
-            connectSuccessDetails.style.display = "block";
-            
-            // Visual change to nav button
-            navbarConnectBtn.textContent = "CONNECTED";
-            navbarConnectBtn.style.borderColor = "#39ff14";
-            navbarConnectBtn.style.color = "#39ff14";
-            navbarConnectBtn.style.textShadow = "0 0 8px rgba(57, 255, 20, 0.6)";
-          }, 400);
-        }
-        terminalProgressBar.style.width = `${currentProgress}%`;
-      }, 100);
-    }
+      if (closeConnectModal) {
+        closeConnectModal.addEventListener('click', closeConnectModalWindow);
+      }
 
-    function closeConnectModalWindow() {
-      connectModal.classList.remove('active');
-      clearInterval(progressInterval);
-    }
+      if (disconnectBtn) {
+        disconnectBtn.addEventListener('click', handleDisconnect);
+      }
 
-    function handleDisconnect() {
-      closeConnectModalWindow();
-      navbarConnectBtn.textContent = "CONNECT";
-      navbarConnectBtn.style.borderColor = "var(--neon-red)";
-      navbarConnectBtn.style.color = "var(--text-main)";
-      navbarConnectBtn.style.textShadow = "none";
-    }
-
-    if (navbarConnectBtn) {
-      navbarConnectBtn.addEventListener('click', showConnectModal);
-    }
-
-    if (closeConnectModal) {
-      closeConnectModal.addEventListener('click', closeConnectModalWindow);
-    }
-
-    if (disconnectBtn) {
-      disconnectBtn.addEventListener('click', handleDisconnect);
-    }
-
-    if (chatAdminBtn) {
-      chatAdminBtn.addEventListener('click', () => {
-        const message = "Hello NEXUS Admin, I have successfully connected my cyberdeck to the marketplace subnet and would like to inquire about system services.";
-        const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
-        window.open(waUrl, '_blank');
-      });
-    }
+      if (chatAdminBtn) {
+        chatAdminBtn.addEventListener('click', () => {
+          const message = "Hello NEXUS Admin, I have successfully connected my cyberdeck to the marketplace subnet and would like to inquire about system services.";
+          const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+          window.open(waUrl, '_blank');
+        });
+      }
+    });
 
     // ===== RETRO DITHERED WAVES WEBGL BACKGROUND =====
     (function() {
